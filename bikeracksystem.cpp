@@ -32,16 +32,15 @@ BikeRackSystem::BikeRackSystem(qreal height, qreal width, QWidget *parent) :
 
 qreal BikeRackSystem::getY(qreal latitude)
 {
-  qreal diffY = latitude - minLatitude;
+  qreal multiplier = (latitude - minLatitude) / (maxLatitude - minLatitude);
 
-  return height - (diffY*height);
+  return height - (multiplier * height);
 }
 
 qreal BikeRackSystem::getX(qreal longitude)
 {
-  qreal diffX = longitude - minLongitude;
-  qDebug() << "diffX is " << diffX;
-  return width * diffX;
+  qreal multiplier = (longitude - minLongitude) / (maxLongitude - minLongitude);
+  return width * multiplier;
 }
 
 QJsonDocument BikeRackSystem::getJsonContents(QString jsonfile)
@@ -70,18 +69,14 @@ void BikeRackSystem::doCalculations(QJsonDocument doc)
        addNewBikeRack(rackObj);
    }
 
-   qDebug() << minLatitude;
-   qDebug() << minLongitude;
+   qDebug() << minLatitude << " <-> " << maxLatitude;
+   qDebug() << minLongitude << " <-> " << maxLongitude;
 
    foreach (BikeRack * rack, bikeracks.values()) {
-       qDebug() << "Rack at " << rack->getDesc();
        qreal rackX = getX(rack->getLongitude());
        qreal rackY = getY(rack->getLatitude());
-       qDebug() << "X: " << rackX << " longitude : " << rack->getLongitude();
-       qDebug() << "Y: " << rackY << " latitude : " << rack->getLatitude();
-
-       rack->setPos(rackX, rackY);
-       rack->setBrush(* new QBrush(QColor::fromRgb(0,255,0)));
+       rack->setRect(rackX, rackY, 10,10);
+       rack->setBrush(* new QBrush(QColor(0,255,0,100)));
        scene->addItem(rack);
    }
 

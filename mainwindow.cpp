@@ -50,7 +50,7 @@ MainWindow::MainWindow(QWidget *parent)
     : QWidget(parent)
 {
     setWindowTitle("Bike Racks in Oslo");
-    qreal width = 800;
+    qreal width = 1024;
     qreal height = 600;
 
     browseButton = new QPushButton(this);
@@ -76,7 +76,7 @@ MainWindow::MainWindow(QWidget *parent)
     statusText->setVisible(true);
     connect (this, SIGNAL(statusUpdate(QString)), statusText, SLOT(setText(QString)));
 
-    setFixedSize(width,height);
+
 
     system->setGeometry(0,25, width, height);
     system->setVisible(true);
