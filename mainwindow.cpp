@@ -40,29 +40,56 @@
 ****************************************************************************/
 
 #include "mainwindow.h"
-#include <QGraphicsScene>
-#include <QGraphicsView>
-#include "bikerack.h"
-#include <QHash>
-#include <QLineEdit>
+#include "bikeracksystem.h"
 #include <QPushButton>
+#include <QFileDialog>
+#include <QDebug>
+#include <QLabel>
 
 MainWindow::MainWindow(QWidget *parent)
     : QWidget(parent)
 {
-    scene = new QGraphicsScene(this);
-    view = new QGraphicsView(scene);
+    setWindowTitle("Bike Racks in Oslo");
 
+    browseButton = new QPushButton(this);
+    browseButton->setText("Choose data folder");
+    browseButton->setGeometry(0,0,200,20);
+    connect(browseButton, SIGNAL(clicked()), this, SLOT(browseButtonPushed()));
+
+    system = new BikeRackSystem(this);
+
+    previousButton = new QPushButton(this);
+    previousButton->setText("Previous status");
+    previousButton->setGeometry(200,0,200,20);
+    connect(previousButton, SIGNAL(clicked()), this, SLOT(previousButtonPushed()));
+
+    nextButton = new QPushButton(this);
+    nextButton->setText("Next status");
+    nextButton->setGeometry(400,0,200,20);
+    connect(nextButton, SIGNAL(clicked()), this, SLOT(nextButtonPushed()));
+
+    statusText = new QLabel(this);
+    statusText->setText("Status bar");
+    statusText->setGeometry(0, 25, 1000, 20);
+    statusText->setVisible(true);
+    connect (this, SIGNAL(statusUpdate(QString)), statusText, SLOT(setText(QString)));
+
+    setFixedSize(800,600);
+
+    system->setGeometry(0,25, 800, 600);
+    system->setVisible(true);
+
+    /*
     BikeRack * rack1 = new BikeRack(65.6, 45.6, 20, 400,200,10,10);
     BikeRack * rack2 = new BikeRack(63.6, 45.6, 20, 200,200,10,10);
 
     racks.insert(0,rack1);
     racks.insert(1,rack2);
 
-    /*QBrush * fullBrush = new QBrush(QColor::fromRgb(0,250,154));
+    QBrush * fullBrush = new QBrush(QColor::fromRgb(0,250,154));
     rack1->setBrush(* fullBrush);
     rack1->setBrush(QBrush(QColor::fromRgb(0,255,0)));
-    */
+
 
     rackID = new QLineEdit(this);
     rackID->setPlaceholderText("Rack ID here");
@@ -80,9 +107,9 @@ MainWindow::MainWindow(QWidget *parent)
     B->setPlaceholderText("B");
     B->setGeometry(210,0,20,20);
 
-    change = new QPushButton(this);
-    change->setText("Change value");
-    change->setGeometry(240,0,120,20);
+    changeButton = new QPushButton(this);
+    changeButton->setText("Change value");
+    changeButton->setGeometry(240,0,120,20);
 
     scene->addItem(rack1);
     scene->addItem(rack2);
@@ -90,18 +117,51 @@ MainWindow::MainWindow(QWidget *parent)
     scene->addWidget(R);
     scene->addWidget(G);
     scene->addWidget(B);
+    */
 
-    view->showMaximized();
-    view->setParent(this);
-
-
-
-    setWindowTitle("Bike Racks in Oslo");
 }
 
-void MainWindow::changeLum(int R, int G, int B, int id)
+/*
+void MainWindow::buttonPushed()
 {
-    racks[id]->changeLum(R,G,B);
+    int red =  R->text().toInt();
+    int green =  G->text().toInt();
+    int blue = B->text().toInt();
+
+    int id = rackID->text().toInt();
+
+    changeLum(red,green,blue,id);
+} */
+
+void MainWindow::browseButtonPushed()
+{
+    QString dir = QFileDialog::getExistingDirectory(this, tr("Open Directory"),
+                                                QDir::homePath(),
+                                                QFileDialog::ShowDirsOnly
+                                                | QFileDialog::DontResolveSymlinks);
+    qDebug() << dir;
+
+    if (system != NULL)
+    {
+        if (system->setDataFolder(dir + "/"))
+        {
+            emit statusUpdate("Successfully loaded racks file.");
+        }
+        else
+        {
+            emit statusUpdate("Something went wrong");
+        }
+    }
 }
 
+void MainWindow::previousButtonPushed()
+{
+    emit statusUpdate("Previous status button");
+    emit previousStatus();
+}
 
+void MainWindow::nextButtonPushed()
+{
+    emit statusUpdate("Next status button");
+    emit nextStatus();
+}

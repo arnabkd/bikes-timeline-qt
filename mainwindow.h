@@ -2,14 +2,12 @@
 #define MAINWINDOW_H
 
 #include <QWidget>
-#include "bikerack.h"
 
 QT_BEGIN_NAMESPACE
-class QGraphicsScene;
-class QGraphicsView;
-class QLineEdit;
 class QString;
 class QPushButton;
+class BikeRackSystem;
+class QLabel;
 QT_END_NAMESPACE
 
 class MainWindow : public QWidget
@@ -19,17 +17,27 @@ public:
     MainWindow(QWidget *parent = 0);
 
 private:
-    QGraphicsScene         * scene;
-    QGraphicsView          * view;
-    QHash <int, BikeRack *>  racks;
-    QLineEdit              * rackID;
-    QLineEdit              * R;
-    QLineEdit              * G;
-    QLineEdit              * B;
-    QPushButton            * change;
+    /* Buttons */
+    QPushButton            * browseButton;
+    QPushButton            * nextButton;
+    QPushButton            * previousButton;
+
+    /* Status label */
+    QLabel                 * statusText;
+
+    /* BikeRackSystem object that contains all rack information */
+    BikeRackSystem         * system;
+
 
 private slots:
-    void changeLum(int R, int G, int B, int id);
+    void browseButtonPushed();
+    void nextButtonPushed();
+    void previousButtonPushed();
+
+signals:
+    void nextStatus();
+    void previousStatus();
+    void statusUpdate(QString);
 };
 
 #endif // MAINWINDOW_H

@@ -15,10 +15,12 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp \
     rackmap.cpp \
-    bikerack.cpp
+    bikerack.cpp \
+    bikeracksystem.cpp
 
 HEADERS  += mainwindow.h \
     rackmap.h \
-    bikerack.h
+    bikerack.h \
+    bikeracksystem.h
 
 FORMS    +=

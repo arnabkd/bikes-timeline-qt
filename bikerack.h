@@ -9,7 +9,7 @@ public:
     BikeRack(qreal longitude, qreal latitude, int capacity,
              qreal x, qreal y, qreal width, qreal height);
 
-    void setPos(qreal x, qreal y) {setPos(x,y); }
+    void setPos(qreal x, qreal y) { setPos(x,y); }
     void changeLum(int R, int G, int B);
 
 private:
