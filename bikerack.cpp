@@ -2,7 +2,7 @@
 #include <QBrush>
 
 BikeRack::BikeRack(qreal longitude, qreal latitude, int capacity,
-                   qreal x, qreal y, qreal width, qreal height) :
+                   qreal x, qreal y, qreal width, qreal height, QString desc) :
     QGraphicsEllipseItem(x,y,width, height)
 {
     this->capacity = capacity;
@@ -10,6 +10,8 @@ BikeRack::BikeRack(qreal longitude, qreal latitude, int capacity,
     this->longitude = longitude;
     this->latitude = latitude;
     changeLum(0,255,0);
+
+    this->desc = desc;
 }
 
 void BikeRack::changeLum(int R, int G, int B)

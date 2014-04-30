@@ -50,13 +50,15 @@ MainWindow::MainWindow(QWidget *parent)
     : QWidget(parent)
 {
     setWindowTitle("Bike Racks in Oslo");
+    qreal width = 800;
+    qreal height = 600;
 
     browseButton = new QPushButton(this);
     browseButton->setText("Choose data folder");
     browseButton->setGeometry(0,0,200,20);
     connect(browseButton, SIGNAL(clicked()), this, SLOT(browseButtonPushed()));
 
-    system = new BikeRackSystem(this);
+    system = new BikeRackSystem(height, width, this);
 
     previousButton = new QPushButton(this);
     previousButton->setText("Previous status");
@@ -74,9 +76,9 @@ MainWindow::MainWindow(QWidget *parent)
     statusText->setVisible(true);
     connect (this, SIGNAL(statusUpdate(QString)), statusText, SLOT(setText(QString)));
 
-    setFixedSize(800,600);
+    setFixedSize(width,height);
 
-    system->setGeometry(0,25, 800, 600);
+    system->setGeometry(0,25, width, height);
     system->setVisible(true);
 
     /*

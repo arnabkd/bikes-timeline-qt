@@ -9,7 +9,7 @@
 #include <QJsonArray>
 #include <QJsonObject>
 
-BikeRackSystem::BikeRackSystem(QWidget *parent) :
+BikeRackSystem::BikeRackSystem(qreal height, qreal width, QWidget *parent) :
     QWidget(parent)
 {
     scene = new QGraphicsScene(this);
@@ -25,7 +25,23 @@ BikeRackSystem::BikeRackSystem(QWidget *parent) :
     maxLatitude = 0;
     maxLongitude = 0;
 
-    bikeracks = new QHash<int, BikeRack>();
+    this->height = height;
+    this->width = width;
+
+}
+
+qreal BikeRackSystem::getY(qreal latitude)
+{
+  qreal diffY = latitude - minLatitude;
+
+  return height - (diffY*height);
+}
+
+qreal BikeRackSystem::getX(qreal longitude)
+{
+  qreal diffX = longitude - minLongitude;
+  qDebug() << "diffX is " << diffX;
+  return width * diffX;
 }
 
 QJsonDocument BikeRackSystem::getJsonContents(QString jsonfile)
@@ -37,7 +53,6 @@ QJsonDocument BikeRackSystem::getJsonContents(QString jsonfile)
           qWarning("Couldn't open save file.");
           return QJsonDocument();
   }
-
 
   QJsonDocument loadDoc = QJsonDocument::fromJson(loadFile.readAll());
 
@@ -52,21 +67,49 @@ void BikeRackSystem::doCalculations(QJsonDocument doc)
    for (int i = 0; i < rackIDs.size(); i++)
    {
        QJsonObject rackObj = obj[rackIDs[i]].toObject();
-
-       double latitude = rackObj["latitude"].toDouble();
-       double longitude = rackObj["longitude"].toDouble();
-
-       if (minLatitude > latitude || minLatitude == -999)
-           minLatitude = latitude;
-       if (maxLatitude <= latitude)
-           maxLatitude = latitude;
-
-       if (minLongitude > longitude || minLongitude == -999)
-           minLongitude = longitude;
-       if (maxLongitude <= longitude)
-           maxLongitude = longitude;
+       addNewBikeRack(rackObj);
    }
 
+   qDebug() << minLatitude;
+   qDebug() << minLongitude;
+
+   foreach (BikeRack * rack, bikeracks.values()) {
+       qDebug() << "Rack at " << rack->getDesc();
+       qreal rackX = getX(rack->getLongitude());
+       qreal rackY = getY(rack->getLatitude());
+       qDebug() << "X: " << rackX << " longitude : " << rack->getLongitude();
+       qDebug() << "Y: " << rackY << " latitude : " << rack->getLatitude();
+
+       rack->setPos(rackX, rackY);
+       rack->setBrush(* new QBrush(QColor::fromRgb(0,255,0)));
+       scene->addItem(rack);
+   }
+
+}
+
+void BikeRackSystem::addNewBikeRack(QJsonObject rackObj)
+{
+    qreal latitude = rackObj["latitude"].toDouble();
+    qreal longitude = rackObj["longitude"].toDouble();
+
+    /* Update the minLatitude, maxLatitude as required */
+    if (minLatitude > latitude || minLatitude == -999)
+        minLatitude = latitude;
+    if (maxLatitude <= latitude)
+        maxLatitude = latitude;
+
+    /* Update the minLongitude, maxLongitude as requried */
+    if (minLongitude > longitude || minLongitude == -999)
+        minLongitude = longitude;
+    if (maxLongitude <= longitude)
+        maxLongitude = longitude;
+
+    int capacity = rackObj["capacity"].toInt();
+    int rackID = rackObj["id"].toInt();
+    QString desc = rackObj["description"].toString();
+
+    BikeRack * rack = new BikeRack(longitude, latitude, capacity, 0,0,10,10, desc);
+    bikeracks[rackID] = rack;
 }
 
 bool BikeRackSystem::setDataFolder(QString path)

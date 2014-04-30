@@ -12,7 +12,7 @@ class BikeRackSystem : public QWidget
 {
     Q_OBJECT
 public:
-    explicit BikeRackSystem(QWidget *parent = 0);
+    explicit BikeRackSystem(qreal height, qreal width, QWidget *parent = 0);
     bool setDataFolder(QString path);
 
 signals:
@@ -22,16 +22,24 @@ public slots:
 private:
     QJsonDocument getJsonContents(QString jsonfile);
     void doCalculations(QJsonDocument doc);
+    void addNewBikeRack(QJsonObject rackObj);
 
-    QGraphicsScene         * scene;
-    QGraphicsView          * view;
+    qreal getY(qreal latitude);
+    qreal getX(qreal longitude);
 
-    double                   minLatitude;
-    double                   maxLatitude;
-    double                   minLongitude;
-    double                   maxLongitude;
+    QGraphicsScene * scene;
+    QGraphicsView  * view;
 
-    QHash <int, BikeRack>  * bikeracks;
+    qreal minLatitude;
+    qreal maxLatitude;
+    qreal minLongitude;
+    qreal maxLongitude;
+
+    qreal height;
+    qreal width;
+
+
+    QHash <int, BikeRack *>  bikeracks;
 };
 
 #endif // BIKERACKSYSTEM_H
