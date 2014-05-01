@@ -27,13 +27,11 @@ BikeRackSystem::BikeRackSystem(qreal height, qreal width, QWidget *parent) :
 
     this->height = height;
     this->width = width;
-
 }
 
 qreal BikeRackSystem::getY(qreal latitude)
 {
   qreal multiplier = (latitude - minLatitude) / (maxLatitude - minLatitude);
-
   return height - (multiplier * height);
 }
 
@@ -69,9 +67,6 @@ void BikeRackSystem::doCalculations(QJsonDocument doc)
        addNewBikeRack(rackObj);
    }
 
-   qDebug() << minLatitude << " <-> " << maxLatitude;
-   qDebug() << minLongitude << " <-> " << maxLongitude;
-
    foreach (BikeRack * rack, bikeracks.values()) {
        qreal rackX = getX(rack->getLongitude());
        qreal rackY = getY(rack->getLatitude());
@@ -102,7 +97,7 @@ void BikeRackSystem::addNewBikeRack(QJsonObject rackObj)
     int capacity = rackObj["capacity"].toInt();
     int rackID = rackObj["id"].toInt();
     QString desc = rackObj["description"].toString();
-
+    qDebug() << desc;
     BikeRack * rack = new BikeRack(longitude, latitude, capacity, 0,0,10,10, desc);
     bikeracks[rackID] = rack;
 }
@@ -117,8 +112,6 @@ bool BikeRackSystem::setDataFolder(QString path)
       qDebug() << "Couldn't find a racks.json file";
       return false;
     }
-
-    qDebug() << "Found a racks.json file";
 
     QJsonDocument doc = getJsonContents(jsonfile);
 

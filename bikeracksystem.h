@@ -38,7 +38,6 @@ private:
     qreal height;
     qreal width;
 
-
     QHash <int, BikeRack *>  bikeracks;
 };
 

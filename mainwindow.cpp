@@ -49,7 +49,9 @@
 MainWindow::MainWindow(QWidget *parent)
     : QWidget(parent)
 {
-    setWindowTitle("Bike Racks in Oslo");
+
+
+    setWindowTitle("Bike Racks in Oslo øøø");
     qreal width = 1024;
     qreal height = 600;
 
@@ -76,64 +78,11 @@ MainWindow::MainWindow(QWidget *parent)
     statusText->setVisible(true);
     connect (this, SIGNAL(statusUpdate(QString)), statusText, SLOT(setText(QString)));
 
-
-
     system->setGeometry(0,25, width, height);
     system->setVisible(true);
 
-    /*
-    BikeRack * rack1 = new BikeRack(65.6, 45.6, 20, 400,200,10,10);
-    BikeRack * rack2 = new BikeRack(63.6, 45.6, 20, 200,200,10,10);
-
-    racks.insert(0,rack1);
-    racks.insert(1,rack2);
-
-    QBrush * fullBrush = new QBrush(QColor::fromRgb(0,250,154));
-    rack1->setBrush(* fullBrush);
-    rack1->setBrush(QBrush(QColor::fromRgb(0,255,0)));
-
-
-    rackID = new QLineEdit(this);
-    rackID->setPlaceholderText("Rack ID here");
-    rackID->setGeometry(20,0,100,20);
-
-    R = new QLineEdit(this);
-    R->setPlaceholderText("R");
-    R->setGeometry(150,0,20,20);
-
-    G = new QLineEdit(this);
-    G->setPlaceholderText("G");
-    G->setGeometry(180,0,20,20);
-
-    B = new QLineEdit(this);
-    B->setPlaceholderText("B");
-    B->setGeometry(210,0,20,20);
-
-    changeButton = new QPushButton(this);
-    changeButton->setText("Change value");
-    changeButton->setGeometry(240,0,120,20);
-
-    scene->addItem(rack1);
-    scene->addItem(rack2);
-    scene->addWidget(rackID);
-    scene->addWidget(R);
-    scene->addWidget(G);
-    scene->addWidget(B);
-    */
-
 }
 
-/*
-void MainWindow::buttonPushed()
-{
-    int red =  R->text().toInt();
-    int green =  G->text().toInt();
-    int blue = B->text().toInt();
-
-    int id = rackID->text().toInt();
-
-    changeLum(red,green,blue,id);
-} */
 
 void MainWindow::browseButtonPushed()
 {
@@ -141,8 +90,6 @@ void MainWindow::browseButtonPushed()
                                                 QDir::homePath(),
                                                 QFileDialog::ShowDirsOnly
                                                 | QFileDialog::DontResolveSymlinks);
-    qDebug() << dir;
-
     if (system != NULL)
     {
         if (system->setDataFolder(dir + "/"))
