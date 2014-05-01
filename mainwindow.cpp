@@ -47,20 +47,33 @@
 #include <QLabel>
 
 MainWindow::MainWindow(QWidget *parent)
-    : QWidget(parent)
+    : QMainWindow(parent)
 {
-
-
-    setWindowTitle("Bike Racks in Oslo øøø");
+    setWindowTitle("Bike Racks in Oslo");
     qreal width = 1024;
     qreal height = 600;
 
+    system = new BikeRackSystem(height, width, this);
+    system->setGeometry(0,25, width , height);
+
+    setupButtons();
+    setupBikeRackSystem();
+
+    setFixedSize(width, height);
+}
+
+void MainWindow::setupBikeRackSystem()
+{
+    connect(this, SIGNAL(nextStatus()), system, SLOT(nextStatus()));
+    connect(this, SIGNAL(previousStatus()), system, SLOT(previousStatus()));
+}
+
+void MainWindow::setupButtons()
+{
     browseButton = new QPushButton(this);
     browseButton->setText("Choose data folder");
     browseButton->setGeometry(0,0,200,20);
     connect(browseButton, SIGNAL(clicked()), this, SLOT(browseButtonPushed()));
-
-    system = new BikeRackSystem(height, width, this);
 
     previousButton = new QPushButton(this);
     previousButton->setText("Previous status");
@@ -73,23 +86,20 @@ MainWindow::MainWindow(QWidget *parent)
     connect(nextButton, SIGNAL(clicked()), this, SLOT(nextButtonPushed()));
 
     statusText = new QLabel(this);
+    statusText->setStyleSheet("QLabel {border : 1px solid black};");
     statusText->setText("Status bar");
-    statusText->setGeometry(0, 25, 1000, 20);
+    statusText->setGeometry(610,0, 400, 20);
     statusText->setVisible(true);
     connect (this, SIGNAL(statusUpdate(QString)), statusText, SLOT(setText(QString)));
 
-    system->setGeometry(0,25, width, height);
-    system->setVisible(true);
-
 }
-
 
 void MainWindow::browseButtonPushed()
 {
     QString dir = QFileDialog::getExistingDirectory(this, tr("Open Directory"),
-                                                QDir::homePath(),
-                                                QFileDialog::ShowDirsOnly
-                                                | QFileDialog::DontResolveSymlinks);
+                                                    QDir::homePath(),
+                                                    QFileDialog::ShowDirsOnly
+                                                    | QFileDialog::DontResolveSymlinks);
     if (system != NULL)
     {
         if (system->setDataFolder(dir + "/"))

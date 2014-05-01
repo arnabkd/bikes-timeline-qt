@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QWidget>
+#include <QMainWindow>
 
 QT_BEGIN_NAMESPACE
 class QString;
@@ -10,7 +11,7 @@ class BikeRackSystem;
 class QLabel;
 QT_END_NAMESPACE
 
-class MainWindow : public QWidget
+class MainWindow : public QMainWindow
 {
     Q_OBJECT
 public:
@@ -18,15 +19,18 @@ public:
 
 private:
     /* Buttons */
-    QPushButton            * browseButton;
-    QPushButton            * nextButton;
-    QPushButton            * previousButton;
+    QPushButton * browseButton;
+    QPushButton * nextButton;
+    QPushButton * previousButton;
 
     /* Status label */
-    QLabel                 * statusText;
+    QLabel * statusText;
 
     /* BikeRackSystem object that contains all rack information */
-    BikeRackSystem         * system;
+    BikeRackSystem * system;
+
+    void setupButtons();
+    void setupBikeRackSystem();
 
 
 private slots:
