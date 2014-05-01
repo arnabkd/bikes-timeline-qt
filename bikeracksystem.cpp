@@ -10,6 +10,7 @@
 #include <QJsonObject>
 #include <QDir>
 #include <QJsonArray>
+#include <QDateTime>
 
 BikeRackSystem::BikeRackSystem(qreal height, qreal width, QWidget *parent) :
     QWidget(parent)
@@ -37,6 +38,14 @@ qreal BikeRackSystem::getX(qreal longitude)
 {
     qreal multiplier = (longitude - minLongitude) / (maxLongitude - minLongitude);
     return width * multiplier;
+}
+
+QString BikeRackSystem::getDateStr(qreal epoch)
+{
+    const QDateTime dt = QDateTime::fromTime_t(epoch);
+    const QString textdate = dt.toString( Qt::TextDate );
+
+    return textdate;
 }
 
 QJsonDocument BikeRackSystem::getJsonContents(QString jsonfile)
@@ -106,12 +115,10 @@ void BikeRackSystem::setupTimeline(QString dataFolder)
            int id = rackStatus["id"].toInt();
            int bikes = rackStatus["bikes"].toInt();
            availableBikes[id] = bikes;
-           //qDebug() << rackID.toInt() << " -> " << rack["bikes"].toInt();
        }
 
        RackStatus * rackstatus = new RackStatus(epoch, city, availableBikes);
        timeline.append(rackstatus);
-       //qDebug() << availableBikes;
     }
 
     currentStatusIndex = 0;
@@ -202,7 +209,7 @@ void BikeRackSystem::updateStatus()
 
    RackStatus * currentStatus = timeline[currentStatusIndex];
 
-   qDebug() << "showing status at " << currentStatus->getTime();
+   qDebug() << "showing status at " << getDateStr(currentStatus->getTime());
    QHash<int,int> status = currentStatus->getStatus();
 
    foreach (int rackID, status.keys()) {
@@ -211,6 +218,8 @@ void BikeRackSystem::updateStatus()
 
 
 }
+
+
 
 void BikeRackSystem::reset()
 {
