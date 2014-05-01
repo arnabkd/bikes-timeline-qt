@@ -6,7 +6,6 @@
 
 QT_BEGIN_NAMESPACE
 class QString;
-class QPushButton;
 class BikeRackSystem;
 class QLabel;
 QT_END_NAMESPACE
@@ -18,10 +17,18 @@ public:
     MainWindow(QWidget *parent = 0);
 
 private:
-    /* Buttons */
-    QPushButton * browseButton;
-    QPushButton * nextButton;
-    QPushButton * previousButton;
+    /* Actions */
+    QAction * browseAction;
+    QAction * nextAction;
+    QAction * previousAction;
+    QAction * playAction;
+    QAction * pauseAction;
+
+    /* Menu */
+    QMenu * menu;
+
+    /* Toolbar */
+    QToolBar * toolBar;
 
     /* Status label */
     QLabel * statusText;
@@ -29,14 +36,21 @@ private:
     /* BikeRackSystem object that contains all rack information */
     BikeRackSystem * system;
 
-    void setupButtons();
-    void setupBikeRackSystem();
+    QTimer * timer;
 
+    void createActions();
+    void createToolBar();
+    void createMenu();
+    void createStatusBar();
 
 private slots:
-    void browseButtonPushed();
-    void nextButtonPushed();
-    void previousButtonPushed();
+    void browse();
+    void next();
+    void previous();
+    void play();
+    void pause();
+
+    void setStatus(QString message);
 
 signals:
     void nextStatus();

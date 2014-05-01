@@ -45,6 +45,7 @@
 #include <QFileDialog>
 #include <QDebug>
 #include <QLabel>
+#include <QtWidgets>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -54,22 +55,72 @@ MainWindow::MainWindow(QWidget *parent)
     qreal height = 600;
 
     system = new BikeRackSystem(height, width, this);
-    system->setGeometry(0,25, width , height);
-
-    setupButtons();
-    setupBikeRackSystem();
-
-    setFixedSize(width, height);
-}
-
-void MainWindow::setupBikeRackSystem()
-{
     connect(this, SIGNAL(nextStatus()), system, SLOT(nextStatus()));
     connect(this, SIGNAL(previousStatus()), system, SLOT(previousStatus()));
+
+    createActions();
+    createMenu();
+    createToolBar();
+    createStatusBar();
+
+    connect(this, SIGNAL(statusUpdate(QString)), this, SLOT(setStatus(QString)));
+    connect(system, SIGNAL(timeString(QString)), this, SLOT(setStatus(QString)));
+    setCentralWidget(system);
+
+    setMinimumSize(width, height);
 }
 
+void MainWindow::createActions()
+{
+    browseAction = new QAction(tr("Set data folder"), this);
+    browseAction->setShortcuts(QKeySequence::Open);
+    browseAction->setStatusTip(tr("Set data folder"));
+    connect(browseAction, SIGNAL(triggered()), this, SLOT(browse()));
+
+    nextAction = new QAction(tr("Next status"), this);
+    nextAction->setShortcuts(QKeySequence::MoveToNextChar);
+    nextAction->setStatusTip(tr("See the next rack status"));
+    connect(nextAction, SIGNAL(triggered()), this, SLOT(next()));
+
+    previousAction = new QAction(tr("Previous status"), this);
+    previousAction->setShortcuts(QKeySequence::MoveToPreviousChar);
+    previousAction->setStatusTip(tr("See the previous rack status"));
+    connect(previousAction, SIGNAL(triggered()), this, SLOT(previous()));
+
+    playAction = new QAction(tr("Show animation"), this);
+    playAction->setShortcuts(QKeySequence::Print);
+    playAction->setStatusTip(tr("Animate the dataset"));
+    connect(playAction, SIGNAL(triggered()), this, SLOT(play()));
+
+    pauseAction = new QAction(tr("Stop animation"), this);
+    pauseAction->setShortcuts(QKeySequence::Back);
+    pauseAction->setStatusTip(tr("Stop the animation"));
+    connect(pauseAction, SIGNAL(triggered()), this, SLOT(pause()));
+}
+
+void MainWindow::createToolBar()
+{
+}
+
+void MainWindow::createMenu()
+{
+    menu = menuBar()->addMenu("App menu");
+    menu->addAction(browseAction);
+    menu->addAction(nextAction);
+    menu->addAction(previousAction);
+    menu->addAction(playAction);
+    menu->addAction(pauseAction);
+}
+
+void MainWindow::createStatusBar()
+{
+    statusBar()->showMessage(tr("Ready"));
+}
+
+/*
 void MainWindow::setupButtons()
 {
+
     browseButton = new QPushButton(this);
     browseButton->setText("Choose data folder");
     browseButton->setGeometry(0,0,200,20);
@@ -93,8 +144,9 @@ void MainWindow::setupButtons()
     connect (this, SIGNAL(statusUpdate(QString)), statusText, SLOT(setText(QString)));
 
 }
+*/
 
-void MainWindow::browseButtonPushed()
+void MainWindow::browse()
 {
     QString dir = QFileDialog::getExistingDirectory(this, tr("Open Directory"),
                                                     QDir::homePath(),
@@ -113,14 +165,33 @@ void MainWindow::browseButtonPushed()
     }
 }
 
-void MainWindow::previousButtonPushed()
+void MainWindow::previous()
 {
-    emit statusUpdate("Previous status button");
     emit previousStatus();
 }
 
-void MainWindow::nextButtonPushed()
+void MainWindow::play()
 {
-    emit statusUpdate("Next status button");
+    timer = new QTimer(this);
+    connect(timer, SIGNAL(timeout()), this, SLOT(next()));
+    timer->start(25);
+}
+
+void MainWindow::pause()
+{
+    if (timer)
+    {
+        timer->stop();
+        disconnect(timer, SIGNAL(timeout()), this, SLOT(next()));
+    }
+}
+
+void MainWindow::setStatus(QString message)
+{
+    statusBar()->showMessage(message);
+}
+
+void MainWindow::next()
+{
     emit nextStatus();
 }

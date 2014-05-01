@@ -38,7 +38,7 @@ void BikeRack::updateNumBikes(int bikes)
 
 void BikeRack::changeLum(int R, int G, int B)
 {
-    QBrush * brush = new QBrush(QColor::fromRgb(R,G,B,150));
+    QBrush * brush = new QBrush(QColor::fromRgb(R,G,B,255));
     setBrush(* brush);
 
 }

@@ -122,7 +122,6 @@ void BikeRackSystem::setupTimeline(QString dataFolder)
     }
 
     currentStatusIndex = 0;
-    qDebug() << "timeline now has " << timeline.size() << " files";
     updateStatus();
 
 }
@@ -173,9 +172,7 @@ bool BikeRackSystem::setDataFolder(QString path)
         return false;
     }
 
-    qDebug() << "Cleaning up old objects first";
     reset();
-
     QJsonDocument doc = getJsonContents(jsonfile);
 
     loadRacksFromFile(doc);
@@ -185,7 +182,6 @@ bool BikeRackSystem::setDataFolder(QString path)
 
 void BikeRackSystem::nextStatus()
 {
-    qDebug() << "Showing next status";
     if ((currentStatusIndex+1) < timeline.size())
         currentStatusIndex++;
     updateStatus();
@@ -193,7 +189,6 @@ void BikeRackSystem::nextStatus()
 
 void BikeRackSystem::previousStatus()
 {
-    qDebug() << "Showing previous status";
     if ((currentStatusIndex-1) >= 0)
         currentStatusIndex--;
     updateStatus();
@@ -209,17 +204,21 @@ void BikeRackSystem::updateStatus()
 
    RackStatus * currentStatus = timeline[currentStatusIndex];
 
-   qDebug() << "showing status at " << getDateStr(currentStatus->getTime());
+   emit timeString(currentStatus->getCityName() + " bike racks status at " + getDateStr(currentStatus->getTime()));
    QHash<int,int> status = currentStatus->getStatus();
+
+   if (currentStatusIndex == (timeline.size() -1))
+   {
+       emit timeString(currentStatus->getCityName()
+                       + " bike racks status at " +
+                       getDateStr(currentStatus->getTime())
+                       + " (end of dataset)");
+   }
 
    foreach (int rackID, status.keys()) {
       bikeracks[rackID]->updateNumBikes(status[rackID]);
    }
-
-
 }
-
-
 
 void BikeRackSystem::reset()
 {

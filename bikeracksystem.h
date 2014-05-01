@@ -53,6 +53,8 @@ private:
 
     void reset();
 
+signals:
+    void timeString(QString message);
 
 };
 
