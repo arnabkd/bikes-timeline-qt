@@ -17,12 +17,14 @@ SOURCES += main.cpp\
     bikerack.cpp \
     bikeracksystem.cpp \
     rackstatus.cpp \
-    mathutils.cpp
+    mathutils.cpp \
+    datasetloader.cpp
 
 HEADERS  += mainwindow.h \
     bikerack.h \
     bikeracksystem.h \
     rackstatus.h \
-    mathutils.h
+    mathutils.h \
+    datasetloader.h
 
 FORMS    +=

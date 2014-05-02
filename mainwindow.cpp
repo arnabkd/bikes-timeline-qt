@@ -189,11 +189,6 @@ void MainWindow::browse()
     //TODO: Move the data loading to a worker object
     system->loadDataSet();
 
-    /* Load the dataset in a different set so GUI stays responsive
-    QThread * thread = new QThread();
-    connect (thread, SIGNAL(started()), system, SLOT(loadDataSet()));
-    system->moveToThread(thread);
-    thread->start();*/
 }
 
 void MainWindow::setStatus(QString message)

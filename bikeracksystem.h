@@ -8,6 +8,7 @@ class QGraphicsScene;
 class QGraphicsView;
 class BikeRack;
 class RackStatus;
+class DataSetLoader;
 
 class BikeRackSystem : public QWidget
 {
@@ -22,10 +23,13 @@ public slots:
     void nextStatus();
     void previousStatus();
     void loadDataSet();
+    void dataObjectsRead();
 
 private:
     QGraphicsScene * scene;
     QGraphicsView  * view;
+
+    DataSetLoader * loader;
 
     qreal minLatitude;
     qreal maxLatitude;
@@ -35,29 +39,20 @@ private:
     qreal width;
 
     QHash <int, BikeRack *>  bikeracks;
-
     QList <RackStatus *> timeline;
     int currentStatusIndex;
 
     QString dataFolder;
 
-    QJsonDocument getJsonContents(QString jsonfile);
-
-    void loadRacksFromFile(QJsonDocument doc);
-    void createBikeRack(QJsonObject rackObj);
     void addRacksToScene();
-    void padBoundaries(qreal percentage, qreal &min, qreal &max);
 
-    void setupTimeline(QString dataFolder);
     void updateStatus();
 
     QString getDateStr(qreal epoch);
 
-    void reset();
 
 signals:
     void message(QString message);
-    void datasetReadyToBeLoaded();
     void datasetLoaded();
     void endOfDataset();
 
