@@ -52,11 +52,9 @@
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 {
-    setWindowTitle("Bike Racks in Oslo");
+    setWindowTitle("Bike share visualization");
     qreal width = 1024;
     qreal height = 600;
-
-
 
     createActions();
     createMenu();
@@ -64,13 +62,12 @@ MainWindow::MainWindow(QWidget *parent)
     createStatusBar();
     createBikeRackSystem(width, height);
 
-
-    setCentralWidget(system);
-
     setMinimumSize(width, height);
     showMaximized();
 
     setBackgroundRole(QPalette::Shadow);
+
+    connect(this, SIGNAL(statusUpdate(QString)), this, SLOT(setStatus(QString)));
 }
 
 void MainWindow::createActions()
@@ -134,7 +131,7 @@ void MainWindow::createToolBar()
 
 void MainWindow::createMenu()
 {
-    menu = menuBar()->addMenu("App menu");
+    menu = menuBar()->addMenu(tr("App menu"));
     menu->addAction(browseAction);
     menu->addAction(nextAction);
     menu->addAction(previousAction);
@@ -151,12 +148,18 @@ void MainWindow::createBikeRackSystem(int width, int height)
 {
     system = new BikeRackSystem(height, width, this);
     system->setGeometry(0,0,width, height);
+
+    /* Setup connections for navigation */
     connect(this, SIGNAL(nextStatus()), system, SLOT(nextStatus()));
     connect(this, SIGNAL(previousStatus()), system, SLOT(previousStatus()));
-    connect(this, SIGNAL(statusUpdate(QString)), this, SLOT(setStatus(QString)));
+
+    /* Setup connections for the bikerack system to communicate back to the GUI */
     connect(system, SIGNAL(message(QString)), this, SLOT(setStatus(QString)));
     connect(system, SIGNAL(endOfDataset()), this, SLOT(stop()));
-    connect(system,SIGNAL(datasetLoaded()), this, SLOT(dataSetLoaded()));
+    connect(system, SIGNAL(datasetLoaded()), this, SLOT(dataSetLoaded()));
+
+    /* Set the bikerack system to be the central widget */
+    setCentralWidget(system);
 }
 
 void MainWindow::dataSetLoaded()
