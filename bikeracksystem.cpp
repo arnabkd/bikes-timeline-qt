@@ -20,7 +20,7 @@ BikeRackSystem::BikeRackSystem(qreal height, qreal width, QWidget *parent) :
     view = new QGraphicsView(scene);
 
     view->showMaximized();
-    view->setParent(this);
+    view->setParent(this->parentWidget());
 
     this->height = height;
     this->width = width;
@@ -73,8 +73,8 @@ void BikeRackSystem::loadRacksFromFile(QJsonDocument doc)
         createBikeRack(rackObj);
     }
 
-    padBoundaries(10, minLatitude, maxLatitude);
-    padBoundaries(10, minLongitude, maxLongitude);
+    //padBoundaries(5, minLatitude, maxLatitude);
+    //padBoundaries(5, minLongitude, maxLongitude);
 
     addRacksToScene();
 }
@@ -98,8 +98,12 @@ void BikeRackSystem::setupTimeline(QString dataFolder)
     QStringList statusFiles = dir.entryList();
     statusFiles.removeAll("racks.json");
 
+    int i = 0;
+    qDebug() << statusFiles.size() << " files to be added.";
+
     foreach (QString fileName, statusFiles)
     {
+       emit message("loaded " + QString::number(i) + " files");
        QJsonDocument doc = getJsonContents(dataFolder + "/" +fileName);
        QJsonObject obj = doc.object();
 
@@ -132,7 +136,8 @@ void BikeRackSystem::addRacksToScene()
     {
         qreal rackX = getX(rack->getLongitude());
         qreal rackY = getY(rack->getLatitude());
-        rack->setRect(rackX, rackY, 10,10);
+        rack->setX(rackX);
+        rack->setY(rackY);
         scene->addItem(rack);
     }
 }
@@ -163,21 +168,23 @@ void BikeRackSystem::createBikeRack(QJsonObject rackObj)
 
 bool BikeRackSystem::setDataFolder(QString path)
 {
-    QString jsonfile = path + "racks.json";
-    QFile Fout(jsonfile);
-
-    if(!Fout.exists())
+    qDebug() << "datafolder set to " << path;
+    if(!QFile(path + "racks.json").exists())
     {
         qDebug() << "Couldn't find a racks.json file";
         return false;
     }
 
+    dataFolder = path;
     reset();
-    QJsonDocument doc = getJsonContents(jsonfile);
 
-    loadRacksFromFile(doc);
-    setupTimeline(path);
     return true;
+}
+
+void BikeRackSystem::setCurrentIndex(int index)
+{
+    currentStatusIndex = index;
+    updateStatus();
 }
 
 void BikeRackSystem::nextStatus()
@@ -194,6 +201,15 @@ void BikeRackSystem::previousStatus()
     updateStatus();
 }
 
+void BikeRackSystem::loadDataSet()
+{
+    QString jsonfile = dataFolder + "racks.json";
+    QJsonDocument doc = getJsonContents(jsonfile);
+    loadRacksFromFile(doc);
+    setupTimeline(dataFolder);
+    emit datasetLoaded();
+}
+
 void BikeRackSystem::updateStatus()
 {
    if (currentStatusIndex < 0 || currentStatusIndex >= timeline.size())
@@ -204,15 +220,16 @@ void BikeRackSystem::updateStatus()
 
    RackStatus * currentStatus = timeline[currentStatusIndex];
 
-   emit timeString(currentStatus->getCityName() + " bike racks status at " + getDateStr(currentStatus->getTime()));
+   emit message(currentStatus->getCityName() + " bike racks status at " + getDateStr(currentStatus->getTime()));
    QHash<int,int> status = currentStatus->getStatus();
 
    if (currentStatusIndex == (timeline.size() -1))
    {
-       emit timeString(currentStatus->getCityName()
+       emit message(currentStatus->getCityName()
                        + " bike racks status at " +
                        getDateStr(currentStatus->getTime())
                        + " (end of dataset)");
+       emit endOfDataset();
    }
 
    foreach (int rackID, status.keys()) {

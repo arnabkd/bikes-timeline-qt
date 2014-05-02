@@ -8,6 +8,7 @@ int main(int argc, char *argv[])
 
     MainWindow w;
     w.show();
-
+    QtMessageHandler * handler =  new QtMessageHandler();
+    qInstallMessageHandler(* handler);
     return a.exec();
 }

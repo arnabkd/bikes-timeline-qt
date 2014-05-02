@@ -2,6 +2,7 @@
 #include <QBrush>
 #include <QTextCodec>
 #include <QDebug>
+#include <QtCore/qmath.h>
 
 BikeRack::BikeRack(qreal longitude, qreal latitude, int capacity,qreal width, qreal height, QString desc) :
     QGraphicsEllipseItem(0,0,width, height)
@@ -21,24 +22,22 @@ void BikeRack::updateNumBikes(int bikes)
 
     if (capacity == 0)
     {
-        qDebug() << "Error: Rack at " << desc << " has capacity 0";
+        //qWarning() << "Error: Rack at " << desc << " has capacity 0";
         return;
     }
 
     /* Calculate the color that should be shown for this amount of bikes */
     qreal percentage = qreal(bikes) / qreal(capacity);
+    percentage = percentage * 100;
 
-    qreal redMult = 1 - percentage;
-    qreal greenMult = percentage;
-
-    int R = (int) (redMult * 255);
-    int G = (int) (greenMult * 255);
-    changeLum(R,G,0);
+    int hue =  qFloor((100 - percentage) * 120/ 100);  // go from green to red
+    //int saturation = 1;   // fade to white as it approaches 50
+    changeLum(hue, 255,255);
 }
 
-void BikeRack::changeLum(int R, int G, int B)
+void BikeRack::changeLum(int H, int S, int V)
 {
-    QBrush * brush = new QBrush(QColor::fromRgb(R,G,B,255));
+    QBrush * brush = new QBrush(QColor::fromHsv(H,S,V));
     setBrush(* brush);
 
 }

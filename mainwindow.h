@@ -21,8 +21,8 @@ private:
     QAction * browseAction;
     QAction * nextAction;
     QAction * previousAction;
-    QAction * playAction;
-    QAction * pauseAction;
+    QAction * playPauseAction;
+    QAction * stopAction;
 
     /* Menu */
     QMenu * menu;
@@ -43,12 +43,15 @@ private:
     void createMenu();
     void createStatusBar();
 
+public slots:
+    void dataSetLoaded();
+
 private slots:
     void browse();
     void next();
     void previous();
-    void play();
-    void pause();
+    void playPause();
+    void stop();
 
     void setStatus(QString message);
 

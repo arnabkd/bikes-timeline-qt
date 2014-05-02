@@ -16,9 +16,12 @@ public:
     explicit BikeRackSystem(qreal height, qreal width, QWidget *parent = 0);
     bool setDataFolder(QString path);
 
+    void setCurrentIndex(int index);
+
 public slots:
     void nextStatus();
     void previousStatus();
+    void loadDataSet();
 
 private:
     QGraphicsScene * scene;
@@ -35,6 +38,8 @@ private:
 
     QList <RackStatus *> timeline;
     int currentStatusIndex;
+
+    QString dataFolder;
 
     QJsonDocument getJsonContents(QString jsonfile);
 
@@ -54,7 +59,10 @@ private:
     void reset();
 
 signals:
-    void timeString(QString message);
+    void message(QString message);
+    void datasetReadyToBeLoaded();
+    void datasetLoaded();
+    void endOfDataset();
 
 };
 

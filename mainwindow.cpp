@@ -46,6 +46,8 @@
 #include <QDebug>
 #include <QLabel>
 #include <QtWidgets>
+#include <QFormLayout>
+
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -55,6 +57,7 @@ MainWindow::MainWindow(QWidget *parent)
     qreal height = 600;
 
     system = new BikeRackSystem(height, width, this);
+    system->setGeometry(0,0,width, height);
     connect(this, SIGNAL(nextStatus()), system, SLOT(nextStatus()));
     connect(this, SIGNAL(previousStatus()), system, SLOT(previousStatus()));
 
@@ -64,10 +67,16 @@ MainWindow::MainWindow(QWidget *parent)
     createStatusBar();
 
     connect(this, SIGNAL(statusUpdate(QString)), this, SLOT(setStatus(QString)));
-    connect(system, SIGNAL(timeString(QString)), this, SLOT(setStatus(QString)));
+    connect(system, SIGNAL(message(QString)), this, SLOT(setStatus(QString)));
+    connect(system, SIGNAL(endOfDataset()), this, SLOT(stop()));
+    connect(system,SIGNAL(datasetLoaded()), this, SLOT(dataSetLoaded()));
+
     setCentralWidget(system);
 
     setMinimumSize(width, height);
+    showMaximized();
+
+    setBackgroundRole(QPalette::Shadow);
 }
 
 void MainWindow::createActions()
@@ -87,19 +96,44 @@ void MainWindow::createActions()
     previousAction->setStatusTip(tr("See the previous rack status"));
     connect(previousAction, SIGNAL(triggered()), this, SLOT(previous()));
 
-    playAction = new QAction(tr("Show animation"), this);
-    playAction->setShortcuts(QKeySequence::Print);
-    playAction->setStatusTip(tr("Animate the dataset"));
-    connect(playAction, SIGNAL(triggered()), this, SLOT(play()));
+    playPauseAction = new QAction(tr("Play/pause animation"), this);
+    playPauseAction->setShortcuts(QKeySequence::Print);
+    playPauseAction->setStatusTip(tr("Play/pause the animation"));
+    connect(playPauseAction, SIGNAL(triggered()), this, SLOT(playPause()));
 
-    pauseAction = new QAction(tr("Stop animation"), this);
-    pauseAction->setShortcuts(QKeySequence::Back);
-    pauseAction->setStatusTip(tr("Stop the animation"));
-    connect(pauseAction, SIGNAL(triggered()), this, SLOT(pause()));
+    stopAction = new QAction(tr("Stop animation"), this);
+    stopAction->setShortcuts(QKeySequence::Back);
+    stopAction->setStatusTip(tr("Stop the animation"));
+    connect(stopAction, SIGNAL(triggered()), this, SLOT(stop()));
+
+    nextAction->setEnabled(false);
+    previousAction->setEnabled(false);
+    playPauseAction->setEnabled(false);
+    stopAction->setEnabled(false);
 }
 
 void MainWindow::createToolBar()
 {
+    toolBar = addToolBar(tr("Toolbar"));
+    toolBar->addAction(browseAction);
+    browseAction->setIcon(style()->standardIcon
+                          (QStyle::SP_DirOpenIcon));
+
+    toolBar->addAction(previousAction);
+    previousAction->setIcon(style()->standardIcon
+                            (QStyle::SP_MediaSeekBackward));
+
+    toolBar->addAction(playPauseAction);
+    playPauseAction->setIcon(style()->standardIcon
+                        (QStyle::SP_MediaPlay));
+
+    toolBar->addAction(stopAction);
+    stopAction->setIcon(style()->standardIcon
+                         (QStyle::SP_MediaStop));
+
+    toolBar->addAction(nextAction);
+    nextAction->setIcon(style()->standardIcon
+                        (QStyle::SP_MediaSeekForward));
 }
 
 void MainWindow::createMenu()
@@ -108,8 +142,8 @@ void MainWindow::createMenu()
     menu->addAction(browseAction);
     menu->addAction(nextAction);
     menu->addAction(previousAction);
-    menu->addAction(playAction);
-    menu->addAction(pauseAction);
+    menu->addAction(playPauseAction);
+    menu->addAction(stopAction);
 }
 
 void MainWindow::createStatusBar()
@@ -117,34 +151,14 @@ void MainWindow::createStatusBar()
     statusBar()->showMessage(tr("Ready"));
 }
 
-/*
-void MainWindow::setupButtons()
+void MainWindow::dataSetLoaded()
 {
-
-    browseButton = new QPushButton(this);
-    browseButton->setText("Choose data folder");
-    browseButton->setGeometry(0,0,200,20);
-    connect(browseButton, SIGNAL(clicked()), this, SLOT(browseButtonPushed()));
-
-    previousButton = new QPushButton(this);
-    previousButton->setText("Previous status");
-    previousButton->setGeometry(200,0,200,20);
-    connect(previousButton, SIGNAL(clicked()), this, SLOT(previousButtonPushed()));
-
-    nextButton = new QPushButton(this);
-    nextButton->setText("Next status");
-    nextButton->setGeometry(400,0,200,20);
-    connect(nextButton, SIGNAL(clicked()), this, SLOT(nextButtonPushed()));
-
-    statusText = new QLabel(this);
-    statusText->setStyleSheet("QLabel {border : 1px solid black};");
-    statusText->setText("Status bar");
-    statusText->setGeometry(610,0, 400, 20);
-    statusText->setVisible(true);
-    connect (this, SIGNAL(statusUpdate(QString)), statusText, SLOT(setText(QString)));
-
+    nextAction->setEnabled(true);
+    previousAction->setEnabled(true);
+    playPauseAction->setEnabled(true);
+    stopAction->setEnabled(true);
 }
-*/
+
 
 void MainWindow::browse()
 {
@@ -152,38 +166,23 @@ void MainWindow::browse()
                                                     QDir::homePath(),
                                                     QFileDialog::ShowDirsOnly
                                                     | QFileDialog::DontResolveSymlinks);
+
     if (system != NULL)
     {
-        if (system->setDataFolder(dir + "/"))
+        if (!system->setDataFolder(dir + "/"))
         {
-            emit statusUpdate("Successfully loaded racks file.");
-        }
-        else
-        {
-            emit statusUpdate("Something went wrong");
+            emit statusUpdate("Something went wrong. Check that you opened the correct directory");
         }
     }
-}
 
-void MainWindow::previous()
-{
-    emit previousStatus();
-}
+    //TODO: Move the data loading to a worker object
+    system->loadDataSet();
 
-void MainWindow::play()
-{
-    timer = new QTimer(this);
-    connect(timer, SIGNAL(timeout()), this, SLOT(next()));
-    timer->start(25);
-}
-
-void MainWindow::pause()
-{
-    if (timer)
-    {
-        timer->stop();
-        disconnect(timer, SIGNAL(timeout()), this, SLOT(next()));
-    }
+    /* Load the dataset in a different set so GUI stays responsive
+    QThread * thread = new QThread();
+    connect (thread, SIGNAL(started()), system, SLOT(loadDataSet()));
+    system->moveToThread(thread);
+    thread->start();*/
 }
 
 void MainWindow::setStatus(QString message)
@@ -191,7 +190,48 @@ void MainWindow::setStatus(QString message)
     statusBar()->showMessage(message);
 }
 
+
+
+void MainWindow::playPause()
+{
+    if (timer)
+    {
+        timer->stop();
+        disconnect(timer, SIGNAL(timeout()), this, SLOT(next()));
+        timer = NULL;
+        playPauseAction->setIcon(style()->standardIcon
+                            (QStyle::SP_MediaPlay));
+        return;
+    }
+
+    timer = new QTimer(this);
+    connect(timer, SIGNAL(timeout()), this, SLOT(next()));
+    timer->start(25);
+
+    playPauseAction->setIcon(style()->standardIcon
+                        (QStyle::SP_MediaPause));
+}
+
+void MainWindow::stop()
+{
+   timer->stop();
+   disconnect(timer, SIGNAL(timeout()), this, SLOT(next()));
+   timer = NULL;
+
+   system->setCurrentIndex(0);
+   playPauseAction->setIcon(style()->standardIcon
+                       (QStyle::SP_MediaPlay));
+   return;
+}
+
+
+
 void MainWindow::next()
 {
     emit nextStatus();
+}
+
+void MainWindow::previous()
+{
+    emit previousStatus();
 }
