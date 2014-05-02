@@ -56,20 +56,14 @@ MainWindow::MainWindow(QWidget *parent)
     qreal width = 1024;
     qreal height = 600;
 
-    system = new BikeRackSystem(height, width, this);
-    system->setGeometry(0,0,width, height);
-    connect(this, SIGNAL(nextStatus()), system, SLOT(nextStatus()));
-    connect(this, SIGNAL(previousStatus()), system, SLOT(previousStatus()));
+
 
     createActions();
     createMenu();
     createToolBar();
     createStatusBar();
+    createBikeRackSystem(width, height);
 
-    connect(this, SIGNAL(statusUpdate(QString)), this, SLOT(setStatus(QString)));
-    connect(system, SIGNAL(message(QString)), this, SLOT(setStatus(QString)));
-    connect(system, SIGNAL(endOfDataset()), this, SLOT(stop()));
-    connect(system,SIGNAL(datasetLoaded()), this, SLOT(dataSetLoaded()));
 
     setCentralWidget(system);
 
@@ -97,12 +91,14 @@ void MainWindow::createActions()
     connect(previousAction, SIGNAL(triggered()), this, SLOT(previous()));
 
     playPauseAction = new QAction(tr("Play/pause animation"), this);
-    playPauseAction->setShortcuts(QKeySequence::Print);
+    QList<QKeySequence> playPauseSequence;
+    playPauseSequence << QKeySequence(Qt::Key_Space);
+    playPauseAction->setShortcuts(playPauseSequence);
     playPauseAction->setStatusTip(tr("Play/pause the animation"));
     connect(playPauseAction, SIGNAL(triggered()), this, SLOT(playPause()));
 
     stopAction = new QAction(tr("Stop animation"), this);
-    stopAction->setShortcuts(QKeySequence::Back);
+    stopAction->setShortcuts(QKeySequence::Save);
     stopAction->setStatusTip(tr("Stop the animation"));
     connect(stopAction, SIGNAL(triggered()), this, SLOT(stop()));
 
@@ -149,6 +145,18 @@ void MainWindow::createMenu()
 void MainWindow::createStatusBar()
 {
     statusBar()->showMessage(tr("Ready"));
+}
+
+void MainWindow::createBikeRackSystem(int width, int height)
+{
+    system = new BikeRackSystem(height, width, this);
+    system->setGeometry(0,0,width, height);
+    connect(this, SIGNAL(nextStatus()), system, SLOT(nextStatus()));
+    connect(this, SIGNAL(previousStatus()), system, SLOT(previousStatus()));
+    connect(this, SIGNAL(statusUpdate(QString)), this, SLOT(setStatus(QString)));
+    connect(system, SIGNAL(message(QString)), this, SLOT(setStatus(QString)));
+    connect(system, SIGNAL(endOfDataset()), this, SLOT(stop()));
+    connect(system,SIGNAL(datasetLoaded()), this, SLOT(dataSetLoaded()));
 }
 
 void MainWindow::dataSetLoaded()

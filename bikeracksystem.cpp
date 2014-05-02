@@ -1,6 +1,7 @@
 #include "bikeracksystem.h"
 #include "bikerack.h"
 #include "rackstatus.h"
+#include "mathutils.h"
 
 #include <QGraphicsScene>
 #include <QGraphicsView>
@@ -28,17 +29,6 @@ BikeRackSystem::BikeRackSystem(qreal height, qreal width, QWidget *parent) :
     reset();
 }
 
-qreal BikeRackSystem::getY(qreal latitude)
-{
-    qreal multiplier = (latitude - minLatitude) / (maxLatitude - minLatitude);
-    return height - (multiplier * height);
-}
-
-qreal BikeRackSystem::getX(qreal longitude)
-{
-    qreal multiplier = (longitude - minLongitude) / (maxLongitude - minLongitude);
-    return width * multiplier;
-}
 
 QString BikeRackSystem::getDateStr(qreal epoch)
 {
@@ -134,8 +124,9 @@ void BikeRackSystem::addRacksToScene()
 {
     foreach (BikeRack * rack, bikeracks.values())
     {
-        qreal rackX = getX(rack->getLongitude());
-        qreal rackY = getY(rack->getLatitude());
+        qreal rackX = MathUtils::convertLongitudeToX(rack->getLongitude(),minLongitude, maxLongitude, width);
+        qreal rackY = MathUtils::convertLatitudeToY(rack->getLatitude(), minLatitude, maxLatitude, height);
+
         rack->setX(rackX);
         rack->setY(rackY);
         scene->addItem(rack);
@@ -162,7 +153,7 @@ void BikeRackSystem::createBikeRack(QJsonObject rackObj)
     int capacity = rackObj["capacity"].toInt();
     int rackID = rackObj["id"].toInt();
     QString desc = rackObj["description"].toString();
-    BikeRack * rack = new BikeRack(longitude, latitude, capacity,10,10, desc);
+    BikeRack * rack = new BikeRack(longitude, latitude, capacity, desc);
     bikeracks[rackID] = rack;
 }
 

@@ -16,11 +16,13 @@ SOURCES += main.cpp\
         mainwindow.cpp \
     bikerack.cpp \
     bikeracksystem.cpp \
-    rackstatus.cpp
+    rackstatus.cpp \
+    mathutils.cpp
 
 HEADERS  += mainwindow.h \
     bikerack.h \
     bikeracksystem.h \
-    rackstatus.h
+    rackstatus.h \
+    mathutils.h
 
 FORMS    +=

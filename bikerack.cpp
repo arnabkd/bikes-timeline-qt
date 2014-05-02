@@ -2,18 +2,23 @@
 #include <QBrush>
 #include <QTextCodec>
 #include <QDebug>
-#include <QtCore/qmath.h>
+#include <QGraphicsBlurEffect>
+#include <mathutils.h>
 
-BikeRack::BikeRack(qreal longitude, qreal latitude, int capacity,qreal width, qreal height, QString desc) :
-    QGraphicsEllipseItem(0,0,width, height)
+BikeRack::BikeRack(qreal longitude, qreal latitude, int capacity, QString desc) :
+    QGraphicsEllipseItem(0,0,capacity, capacity),
+    capacity(capacity),
+    longitude(longitude),
+    latitude(latitude),
+    desc(desc)
 {
-    this->capacity = capacity;
-    this->longitude = longitude;
-    this->latitude = latitude;
-    this->desc = desc;
-
     setToolTip(desc);
     updateNumBikes(0);
+    setOpacity(0.8);
+
+    QGraphicsBlurEffect * blurEffect = new QGraphicsBlurEffect();
+    blurEffect->setBlurRadius(1.5);
+    setGraphicsEffect(blurEffect);
 }
 
 void BikeRack::updateNumBikes(int bikes)
@@ -27,12 +32,9 @@ void BikeRack::updateNumBikes(int bikes)
     }
 
     /* Calculate the color that should be shown for this amount of bikes */
-    qreal percentage = qreal(bikes) / qreal(capacity);
-    percentage = percentage * 100;
+    qreal percentage = (qreal(bikes) / qreal(capacity))*100;
 
-    int hue =  qFloor((100 - percentage) * 120/ 100);  // go from green to red
-    //int saturation = 1;   // fade to white as it approaches 50
-    changeLum(hue, 255,255);
+    changeLum(MathUtils::convertPercentageToHue(percentage),255,255);
 }
 
 void BikeRack::changeLum(int H, int S, int V)

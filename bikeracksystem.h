@@ -51,9 +51,6 @@ private:
     void setupTimeline(QString dataFolder);
     void updateStatus();
 
-    qreal getY(qreal latitude);
-    qreal getX(qreal longitude);
-
     QString getDateStr(qreal epoch);
 
     void reset();

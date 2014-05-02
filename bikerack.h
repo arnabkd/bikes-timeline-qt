@@ -6,7 +6,7 @@
 class BikeRack : public QGraphicsEllipseItem
 {
 public:
-    BikeRack(qreal longitude, qreal latitude, int capacity, qreal width, qreal height, QString desc="");
+    BikeRack(qreal longitude, qreal latitude, int capacity, QString desc="");
 
     void setPos(qreal x, qreal y) { QGraphicsEllipseItem::setPos(x,y); }
     void updateNumBikes(int bikes);

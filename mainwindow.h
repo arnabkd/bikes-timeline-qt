@@ -42,6 +42,7 @@ private:
     void createToolBar();
     void createMenu();
     void createStatusBar();
+    void createBikeRackSystem(int width, int height);
 
 public slots:
     void dataSetLoaded();
