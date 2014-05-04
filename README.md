@@ -1,13 +1,15 @@
-Project homepage
-=================
+# Project homepage
+
 The project homepage can be found [here!] (http://arnabkd.github.io/bikes-timeline-qt)
 
 
-Screenshots
-=================
-Below is a screenshot of London before the morning rush:
-![pre-morning-rush](https://raw.githubusercontent.com/arnabkd/bikes-timeline-qt/gh-pages/screenshots/pre-morning-rush.png)
+## Screenshots
 
-And just after:
-![after-morning-rush](https://raw.githubusercontent.com/arnabkd/bikes-timeline-qt/gh-pages/screenshots/after-morning-rush.png)
+<br />
+<img src="https://raw.githubusercontent.com/arnabkd/bikes-timeline-qt/gh-pages/screenshots/pre-morning-rush.png" width=400,height=300 />
+Figure: Pre morning rush visualization of London bike racks
 
+<br />
+<img src="https://raw.githubusercontent.com/arnabkd/bikes-timeline-qt/gh-pages/screenshots/after-morning-rush.png"
+width=400,height=300 />
+Figure: Post morning rush visualization of London bike racks
