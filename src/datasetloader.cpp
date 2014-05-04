@@ -3,7 +3,6 @@
 #include "rackstatus.h"
 #include "mathutils.h"
 
-#include <QDebug>
 #include <QJsonArray>
 #include <QJsonObject>
 #include <QJsonDocument>

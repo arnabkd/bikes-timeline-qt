@@ -6,7 +6,6 @@
 
 #include <QGraphicsScene>
 #include <QGraphicsView>
-#include <QDebug>
 #include <QFile>
 #include <QDir>
 #include <QDateTime>

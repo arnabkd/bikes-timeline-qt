@@ -1,4 +1,5 @@
 #include "mathutils.h"
+
 #include <QtCore/qmath.h>
 
 /*!

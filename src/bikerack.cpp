@@ -1,9 +1,8 @@
 #include "bikerack.h"
-#include <QBrush>
-#include <QTextCodec>
-#include <QDebug>
-#include <QGraphicsBlurEffect>
 #include "mathutils.h"
+
+#include <QBrush>
+#include <QGraphicsBlurEffect>
 
 
 BikeRack::BikeRack(qreal longitude, qreal latitude, int capacity, QString desc) :
@@ -42,7 +41,6 @@ void BikeRack::updateNumBikes(int bikes)
     if (capacity == 0)
     {
         //qWarning() << "Error: Rack at " << desc << " has capacity 0";
-
         return;
     }
 
@@ -51,7 +49,6 @@ void BikeRack::updateNumBikes(int bikes)
 
     /* Calculate the hue that should be shown for this amount of bikes */
     qreal percentage = (qreal(bikes) / qreal(capacity))*100;
-    //int hue = MathUtils::convertPercentageToHue(percentage);
     int hue = (int) MathUtils::getRescaledValue(percentage,0,100,120);
     changeLum(hue,255,255);
 
