@@ -1,48 +1,43 @@
-<!doctype html>
-<!-- The Time Machine GitHub pages theme was designed and developed by Jon Rohan, on Feb 7, 2012. -->
-<!-- Follow him for fun. http://twitter.com/jonrohan. Tail his code on http://github.com/jonrohan -->
+<!DOCTYPE html>
 <html>
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <link href='https://fonts.googleapis.com/css?family=Chivo:900' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <title>Bikes-timeline-qt by arnabkd</title>
+  </head>
 
-  <link rel="stylesheet" href="stylesheets/stylesheet.css" media="screen"/>
-  <link rel="stylesheet" href="stylesheets/pygment_trac.css"/>
-  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-  <script type="text/javascript" src="javascripts/script.js"></script>
-
-  <title>Bikes-timeline-qt</title>
-  <meta name="description" content="Qt, C++">
-
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-
-</head>
-
-<body>
-
-  <div class="wrapper">
-    <header>
-      <h1 class="title">Bikes-timeline-qt</h1>
-    </header>
+  <body>
     <div id="container">
-      <p class="tagline">Qt, C++</p>
-      <div id="main" role="main">
-        <div class="download-bar">
-        <div class="inner">
-          <a href="https://github.com/arnabkd/bikes-timeline-qt/tarball/master" class="download-button tar"><span>Download</span></a>
-          <a href="https://github.com/arnabkd/bikes-timeline-qt/zipball/master" class="download-button zip"><span>Download</span></a>
-          <a href="https://github.com/arnabkd/bikes-timeline-qt" class="code">View Bikes-timeline-qt on GitHub</a>
-        </div>
-        <span class="blc"></span><span class="trc"></span>
-        </div>
-        <article class="markdown-body">
-          <h3>
-<a name="welcome-to-bikeracks---timeline" class="anchor" href="#welcome-to-bikeracks---timeline"><span class="octicon octicon-link"></span></a>Welcome to BikeRacks - timeline</h3>
+      <div class="inner">
 
-<h3>
-<a name="background" class="anchor" href="#background"><span class="octicon octicon-link"></span></a>Background</h3>
+        <header>
+          <h1>Bikes-timeline-qt</h1>
+          <h2>Qt, C++</h2>
+        </header>
 
-<p>My master's thesis involves using machine learning to predict traffic patterns in bikeshare systems across the globe. As part of that work, I have a dataset for the bikeshare system in Oslo (currently operated by ClearChannel). The dataset includes locations, capacities and rack status for all racks in the Oslo area between April and November 2013.</p>
+        <section id="downloads" class="clearfix">
+          <a href="https://github.com/arnabkd/bikes-timeline-qt/zipball/master" id="download-zip" class="button"><span>Download .zip</span></a>
+          <a href="https://github.com/arnabkd/bikes-timeline-qt/tarball/master" id="download-tar-gz" class="button"><span>Download .tar.gz</span></a>
+          <a href="https://github.com/arnabkd/bikes-timeline-qt" id="view-on-github" class="button"><span>View on GitHub</span></a>
+        </section>
+
+        <hr>
+
+        <section id="main_content">
+          <h1>
+<a name="welcome-to-bikerack-visualization" class="anchor" href="#welcome-to-bikerack-visualization"><span class="octicon octicon-link"></span></a>Welcome to BikeRack Visualization</h1>
+
+<h2>
+<a name="background" class="anchor" href="#background"><span class="octicon octicon-link"></span></a>Background</h2>
+
+<p>My master's thesis involves using machine learning to predict traffic patterns in bikeshare systems across the globe. As part of that work, I have a dataset for the bikeshare system in Oslo (currently operated by ClearChannel), along with datasets for London, New York, Washington D.C. and Chicago, IL. </p>
 
 <h3>
 <a name="the-app" class="anchor" href="#the-app"><span class="octicon octicon-link"></span></a>The app</h3>
@@ -50,36 +45,42 @@
 <p>This app shows a visual representation of the dataset mentioned above.</p>
 
 <h3>
-<a name="details" class="anchor" href="#details"><span class="octicon octicon-link"></span></a>Details</h3>
+<a name="usage" class="anchor" href="#usage"><span class="octicon octicon-link"></span></a>Usage</h3>
+
+<ol>
+<li>Compile the application and launch it.</li>
+<li>In the app, browse to one of the sub-folders under the <code>example-data</code> folder.</li>
+<li>Click "Ok" and wait for the dataset to be loaded.</li>
+<li>Click play (or press the spacebar) and enjoy the animation!</li>
+</ol><h3>
+<a name="screenshots" class="anchor" href="#screenshots"><span class="octicon octicon-link"></span></a>Screenshots</h3>
+
+<p><br><img src="https://raw.githubusercontent.com/arnabkd/bikes-timeline-qt/gh-pages/screenshots/pre-morning-rush.png" width="400,height=300"><br>
+Figure: Pre morning rush visualization of London bike racks</p>
+
+<p><br><img src="https://raw.githubusercontent.com/arnabkd/bikes-timeline-qt/gh-pages/screenshots/after-morning-rush.png" width="400,height=300"><br>
+Figure: Post morning rush visualization of London bike racks</p>
+
+<h3>
+<a name="credits" class="anchor" href="#credits"><span class="octicon octicon-link"></span></a>Credits</h3>
 
 <ul>
-<li>Data collection done by Martin Stensgård <a href="https://github.com/mastensg" class="user-mention">@mastensg</a>
+<li>Based on Qt by Digia</li>
+<li>Data collection for Oslo done by Martin Stensgård <a href="https://github.com/mastensg" class="user-mention">@mastensg</a>
 </li>
-<li>Original source: <a href="http://www.bysykler.no/oslo/kart-over-sykkelstativer">http://www.bysykler.no/oslo/kart-over-sykkelstativer</a>
-</li>
+<li>Thanks to the <a href="https://github.com/eskerda/PyBikes">PyBikes project</a>, which helped me gather data for a number of bikeshare systems around the world.</li>
 <li>Developed by <a href="https://github.com/arnabkd" class="user-mention">@arnabkd</a>
 </li>
 </ul>
-        </article>
+        </section>
+
+        <footer>
+          Bikes-timeline-qt is maintained by <a href="https://github.com/arnabkd">arnabkd</a><br>
+          This page was generated by <a href="http://pages.github.com">GitHub Pages</a>. Tactile theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.
+        </footer>
+
+        
       </div>
     </div>
-    <footer>
-      <div class="owner">
-      <p><a href="https://github.com/arnabkd" class="avatar"><img src="https://avatars2.githubusercontent.com/u/1014699?s=60" width="48" height="48"/></a> <a href="https://github.com/arnabkd">arnabkd</a> maintains <a href="https://github.com/arnabkd/bikes-timeline-qt">Bikes-timeline-qt</a></p>
-
-
-      </div>
-      <div class="creds">
-        <small>This page generated using <a href="http://pages.github.com/">GitHub Pages</a><br/>theme by <a href="https://twitter.com/jonrohan/">Jon Rohan</a></small>
-      </div>
-    </footer>
-  </div>
-  <div class="current-section">
-    <a href="#top">Scroll to top</a>
-    <a href="https://github.com/arnabkd/bikes-timeline-qt/tarball/master" class="tar">tar</a><a href="https://github.com/arnabkd/bikes-timeline-qt/zipball/master" class="zip">zip</a><a href="" class="code">source code</a>
-    <p class="name"></p>
-  </div>
-
-  
-</body>
+  </body>
 </html>
