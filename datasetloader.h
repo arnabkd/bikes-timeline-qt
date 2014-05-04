@@ -22,6 +22,7 @@ public:
 
 signals:
     void datasetLoaded();
+    void loadingStatus(QString);
 
 public slots:
     void load();

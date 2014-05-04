@@ -13,7 +13,6 @@ public:
 
     static int convertPercentageToHue(int percentage);
 
-
 };
 
 #endif // MATHUTILS_H

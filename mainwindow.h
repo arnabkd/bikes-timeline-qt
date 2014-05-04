@@ -44,6 +44,8 @@ private:
     void createStatusBar();
     void createBikeRackSystem(int width, int height);
 
+    void setControlsEnabled (bool enable);
+
 public slots:
     void dataSetLoaded();
 

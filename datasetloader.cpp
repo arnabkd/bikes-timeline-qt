@@ -24,8 +24,8 @@ void DataSetLoader::load()
 
 void DataSetLoader::resetVariables()
 {
-    minLatitude = -999;
-    minLongitude = -999;
+    minLatitude = 0;
+    minLongitude = 0;
 
     maxLatitude = 0;
     maxLongitude = 0;
@@ -51,7 +51,6 @@ void DataSetLoader::loadRacks()
     MathUtils::padBorders(5, minLatitude, maxLatitude);
     MathUtils::padBorders(5, minLongitude, maxLongitude);
 
-    //addRacksToScene();
 }
 
 void DataSetLoader::createBikeRack(QJsonObject rackObj)
@@ -59,17 +58,31 @@ void DataSetLoader::createBikeRack(QJsonObject rackObj)
     qreal latitude = rackObj["latitude"].toDouble();
     qreal longitude = rackObj["longitude"].toDouble();
 
-    /* Update the minLatitude, maxLatitude as required */
-    if (minLatitude > latitude || minLatitude == -999)
+    if (bikeracks.keys().size() == 0)
+    {
         minLatitude = latitude;
-    if (maxLatitude <= latitude)
         maxLatitude = latitude;
-
-    /* Update the minLongitude, maxLongitude as requried */
-    if (minLongitude > longitude || minLongitude == -999)
         minLongitude = longitude;
-    if (maxLongitude <= longitude)
         maxLongitude = longitude;
+
+        qDebug() << "start of dataset";
+    }
+    else
+    {
+        /* Update the minLatitude, maxLatitude as required */
+        if (minLatitude > latitude)
+            minLatitude = latitude;
+        if (maxLatitude <= latitude)
+            maxLatitude = latitude;
+
+        /* Update the minLongitude, maxLongitude as requried */
+        if (minLongitude > longitude)
+            minLongitude = longitude;
+        if (maxLongitude <= longitude)
+            maxLongitude = longitude;
+    }
+
+    //qDebug() << bikeracks.size() << " racks read."<< "min/max: " << minLatitude << "<->" << maxLatitude << " | " << minLongitude << "<->" << maxLongitude;
 
     int capacity = rackObj["capacity"].toInt();
     int rackID = rackObj["id"].toInt();
@@ -94,8 +107,6 @@ QJsonDocument DataSetLoader::getJsonContents(QString jsonfile)
 
 void DataSetLoader::loadDataSet()
 {
-    qDebug() << "load dataset";
-
     /* Add all json files */
     QDir dir(dataFolder);
     QStringList filters;
@@ -107,8 +118,14 @@ void DataSetLoader::loadDataSet()
 
     qDebug() << statusFiles.size() << " files to be added.";
 
+    int i = 0;
     foreach (QString fileName, statusFiles)
     {
+       i++;
+       if (i%1000 == 0)
+           emit loadingStatus("Loading file " + QString::number(i) + " of "
+                          + QString::number(statusFiles.size()));
+
        QJsonDocument doc = getJsonContents(dataFolder + "/" +fileName);
        QJsonObject obj = doc.object();
 

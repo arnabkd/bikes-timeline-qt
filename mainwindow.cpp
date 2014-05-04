@@ -99,10 +99,7 @@ void MainWindow::createActions()
     stopAction->setStatusTip(tr("Stop the animation"));
     connect(stopAction, SIGNAL(triggered()), this, SLOT(stop()));
 
-    nextAction->setEnabled(false);
-    previousAction->setEnabled(false);
-    playPauseAction->setEnabled(false);
-    stopAction->setEnabled(false);
+    setControlsEnabled(false);
 }
 
 void MainWindow::createToolBar()
@@ -118,11 +115,11 @@ void MainWindow::createToolBar()
 
     toolBar->addAction(playPauseAction);
     playPauseAction->setIcon(style()->standardIcon
-                        (QStyle::SP_MediaPlay));
+                             (QStyle::SP_MediaPlay));
 
     toolBar->addAction(stopAction);
     stopAction->setIcon(style()->standardIcon
-                         (QStyle::SP_MediaStop));
+                        (QStyle::SP_MediaStop));
 
     toolBar->addAction(nextAction);
     nextAction->setIcon(style()->standardIcon
@@ -162,12 +159,17 @@ void MainWindow::createBikeRackSystem(int width, int height)
     setCentralWidget(system);
 }
 
+void MainWindow::setControlsEnabled(bool enable)
+{
+    nextAction->setEnabled(enable);
+    previousAction->setEnabled(enable);
+    playPauseAction->setEnabled(enable);
+    stopAction->setEnabled(enable);
+}
+
 void MainWindow::dataSetLoaded()
 {
-    nextAction->setEnabled(true);
-    previousAction->setEnabled(true);
-    playPauseAction->setEnabled(true);
-    stopAction->setEnabled(true);
+    setControlsEnabled(true);
 }
 
 
@@ -183,11 +185,13 @@ void MainWindow::browse()
         if (!system->setDataFolder(dir + "/"))
         {
             emit statusUpdate("Something went wrong. Check that you opened the correct directory");
+            return;
         }
     }
 
-    //TODO: Move the data loading to a worker object
+    stop();
     system->loadDataSet();
+    setControlsEnabled(false);
 
 }
 
@@ -206,7 +210,7 @@ void MainWindow::playPause()
         disconnect(timer, SIGNAL(timeout()), this, SLOT(next()));
         timer = NULL;
         playPauseAction->setIcon(style()->standardIcon
-                            (QStyle::SP_MediaPlay));
+                                 (QStyle::SP_MediaPlay));
         return;
     }
 
@@ -215,19 +219,25 @@ void MainWindow::playPause()
     timer->start(25);
 
     playPauseAction->setIcon(style()->standardIcon
-                        (QStyle::SP_MediaPause));
+                             (QStyle::SP_MediaPause));
 }
 
 void MainWindow::stop()
 {
-   timer->stop();
-   disconnect(timer, SIGNAL(timeout()), this, SLOT(next()));
-   timer = NULL;
+    if (!timer)
+    {
+        return;
+    }
+    else
+    {
+        timer->stop();
+        disconnect(timer, SIGNAL(timeout()), this, SLOT(next()));
+        timer = NULL;
+    }
+    system->setCurrentIndex(0);
+    playPauseAction->setIcon(style()->standardIcon
+                             (QStyle::SP_MediaPlay));
 
-   system->setCurrentIndex(0);
-   playPauseAction->setIcon(style()->standardIcon
-                       (QStyle::SP_MediaPlay));
-   return;
 }
 
 

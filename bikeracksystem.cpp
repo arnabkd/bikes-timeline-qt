@@ -17,16 +17,24 @@ BikeRackSystem::BikeRackSystem(qreal height, qreal width, QWidget *parent) :
 {
     scene = new QGraphicsScene(this);
     scene->setBackgroundBrush(Qt::black);
-    view = new QGraphicsView(scene);
 
+    view = new QGraphicsView(scene);
     view->showMaximized();
     view->setParent(this->parentWidget());
+    view->setSizeAdjustPolicy(QAbstractScrollArea::AdjustToContents);
 
     this->height = height;
     this->width = width;
 
 }
 
+/*!
+ * \brief BikeRackSystem::getDateStr
+ *        Calculate the date string for an epoch.
+ *        Format as
+ * \param epoch
+ * \return
+ */
 QString BikeRackSystem::getDateStr(qreal epoch)
 {
     const QDateTime dt = QDateTime::fromTime_t(epoch);
@@ -59,7 +67,6 @@ bool BikeRackSystem::setDataFolder(QString path)
     }
 
     dataFolder = path;
-
     return true;
 }
 
@@ -85,8 +92,15 @@ void BikeRackSystem::previousStatus()
 
 void BikeRackSystem::loadDataSet()
 {
+    foreach (BikeRack *rack , bikeracks) {
+        scene->removeItem(rack);
+    }
+    timeline.clear();
+    bikeracks.clear();
+
     loader = new DataSetLoader(dataFolder);
     connect(loader, SIGNAL(datasetLoaded()), this, SLOT(dataObjectsRead()));
+    connect(loader, SIGNAL(loadingStatus(QString)), this, SIGNAL(message(QString)));
 
     QThread *thread = new QThread();
     connect(thread, SIGNAL(started()), loader, SLOT(load()));
@@ -98,8 +112,10 @@ void BikeRackSystem::loadDataSet()
 void BikeRackSystem::dataObjectsRead()
 {
     if (!loader)
+    {
+        loadDataSet();
         return;
-
+    }
     this->bikeracks = loader->getBikeRacks();
     this->timeline = loader->getTimeline();
 
@@ -109,6 +125,7 @@ void BikeRackSystem::dataObjectsRead()
     this->maxLongitude = loader->getMaxLongitude();
 
     addRacksToScene();
+    setCurrentIndex(0);
     emit datasetLoaded();
 }
 

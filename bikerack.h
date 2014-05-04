@@ -24,7 +24,7 @@ private:
     int bikes;
 
     QString desc;
-    void changeLum(int R, int G, int B);
+    void changeLum(int H, int S, int V);
 };
 
 #endif // BIKERACK_H
