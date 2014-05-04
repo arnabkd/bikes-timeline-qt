@@ -29,7 +29,7 @@ private:
     QGraphicsScene * scene;
     QGraphicsView  * view;
 
-    DataSetLoader * loader;
+    DataSetLoader * datasetLoader;
 
     qreal minLatitude;
     qreal maxLatitude;
@@ -46,7 +46,7 @@ private:
 
     void addRacksToScene();
 
-    void updateStatus();
+    void updateDisplay();
 
     QString getDateStr(qreal epoch);
 

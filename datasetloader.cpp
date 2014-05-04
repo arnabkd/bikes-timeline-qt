@@ -15,6 +15,10 @@ DataSetLoader::DataSetLoader(QString dataFolder)
 {
 }
 
+/*!
+ * \brief DataSetLoader::load
+ * Loads the racks file and dataset. Emits a datasetLoaded signal when done.
+ */
 void DataSetLoader::load()
 {
     loadRacks();
@@ -32,7 +36,10 @@ void DataSetLoader::resetVariables()
 
     bikeracks.clear();
 }
-
+/*!
+ * \brief DataSetLoader::loadRacks
+ * Loads a racks.json file as BikeRack objects.
+ */
 void DataSetLoader::loadRacks()
 {
     resetVariables();
@@ -91,6 +98,13 @@ void DataSetLoader::createBikeRack(QJsonObject rackObj)
     bikeracks[rackID] = rack;
 }
 
+/*!
+ * \brief DataSetLoader::getJsonContents
+ * Opens a file and returns a QJsonObject with the contents of the file.
+ * If the file doesn't exist, returns an empty QJsonObject.
+ * \param jsonfile
+ * \return
+ */
 QJsonDocument DataSetLoader::getJsonContents(QString jsonfile)
 {
     QFile loadFile(jsonfile);
@@ -142,11 +156,8 @@ void DataSetLoader::loadDataSet()
             availableBikes[id] = bikes;
         }
 
-
-
         RackStatus * rackstatus = new RackStatus(epoch, city, availableBikes);
         timeline.append(rackstatus);
     }
-
 
 }

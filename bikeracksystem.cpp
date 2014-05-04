@@ -78,26 +78,46 @@ bool BikeRackSystem::setDataFolder(QString path)
     return true;
 }
 
+/*!
+ * \brief BikeRackSystem::setCurrentIndex
+ * Sets the current index and updates the display
+ * \param index
+ */
 void BikeRackSystem::setCurrentIndex(int index)
 {
     currentStatusIndex = index;
-    updateStatus();
+    updateDisplay();
 }
 
+/*!
+ * \brief BikeRackSystem::nextStatus
+ * Checks if there is a next index to be displayed. If there is, sets the current
+ * index to be the next one.
+ */
 void BikeRackSystem::nextStatus()
 {
     if ((currentStatusIndex+1) < timeline.size())
-        currentStatusIndex++;
-    updateStatus();
+        setCurrentIndex(currentStatusIndex + 1);
+
 }
 
+/*!
+ * \brief BikeRackSystem::previousStatus
+ * Checks if there is a previous index to be displayed. If there is, sets the current
+ * index to be the previous one.
+ */
 void BikeRackSystem::previousStatus()
 {
     if ((currentStatusIndex-1) >= 0)
-        currentStatusIndex--;
-    updateStatus();
+        setCurrentIndex(currentStatusIndex - 1);
+
 }
 
+/*!
+ * \brief BikeRackSystem::loadDataSet
+ * Clears the existing objects from the scene, assign a datasetloader to a
+ * thread and start the thread.
+ */
 void BikeRackSystem::loadDataSet()
 {
     foreach (BikeRack *rack , bikeracks) {
@@ -106,38 +126,53 @@ void BikeRackSystem::loadDataSet()
     timeline.clear();
     bikeracks.clear();
 
-    loader = new DataSetLoader(dataFolder);
-    connect(loader, SIGNAL(datasetLoaded()), this, SLOT(dataObjectsRead()));
-    connect(loader, SIGNAL(loadingStatus(QString)), this, SIGNAL(message(QString)));
+    datasetLoader = new DataSetLoader(dataFolder);
+    connect(datasetLoader, SIGNAL(datasetLoaded()), this, SLOT(dataObjectsRead()));
+    connect(datasetLoader, SIGNAL(loadingStatus(QString)), this, SIGNAL(message(QString)));
 
     QThread *thread = new QThread();
-    connect(thread, SIGNAL(started()), loader, SLOT(load()));
-    loader->moveToThread(thread);
+    connect(thread, SIGNAL(started()), datasetLoader, SLOT(load()));
+    datasetLoader->moveToThread(thread);
 
     thread->start();
 }
 
+/*!
+ * \brief BikeRackSystem::dataObjectsRead
+ * Called when the dataObjects from the datasetLoader are ready to be stored in this object.
+ */
 void BikeRackSystem::dataObjectsRead()
 {
-    if (!loader)
+    /* Fail-safe, just in case this was called without the datasetLoader being initialized.
+       In that case, call loadDataSet()
+    */
+    if (!datasetLoader)
     {
         loadDataSet();
         return;
     }
-    this->bikeracks = loader->getBikeRacks();
-    this->timeline = loader->getTimeline();
 
-    this->minLatitude = loader->getMinLatitude();
-    this->maxLatitude = loader->getMaxLatitude();
-    this->minLongitude = loader->getMinLongitude();
-    this->maxLongitude = loader->getMaxLongitude();
+    /* Copy the data objects from the loader */
+    this->bikeracks = datasetLoader->getBikeRacks();
+    this->timeline = datasetLoader->getTimeline();
 
+    this->minLatitude = datasetLoader->getMinLatitude();
+    this->maxLatitude = datasetLoader->getMaxLatitude();
+    this->minLongitude = datasetLoader->getMinLongitude();
+    this->maxLongitude = datasetLoader->getMaxLongitude();
+
+    /* Add the racks to the scene and set the current index to be at the start of the dataset */
     addRacksToScene();
     setCurrentIndex(0);
     emit datasetLoaded();
 }
 
-void BikeRackSystem::updateStatus()
+/*!
+ * \brief BikeRackSystem::updateDisplay
+ * Updates the display to show the current status (as given by the currentStatusIndex variable).
+ *
+ */
+void BikeRackSystem::updateDisplay()
 {
     if (currentStatusIndex < 0 || currentStatusIndex >= timeline.size())
     {
@@ -150,15 +185,16 @@ void BikeRackSystem::updateStatus()
     emit message(currentStatus->getCityName() + " bike racks status at " + getDateStr(currentStatus->getTime()));
     QHash<int,int> status = currentStatus->getStatus();
 
+    /* When we reach the end of the dataset, let the GUI know so the controls can react accordingly. */
     if (currentStatusIndex == (timeline.size() -1))
     {
-        emit message(currentStatus->getCityName()  + " bike racks status at "
-                     + getDateStr(currentStatus->getTime()) + " (end of dataset)");
         emit endOfDataset();
     }
 
     foreach (int rackID, status.keys()) {
-        /* Verify that this rack ID was in the original racks.json file.
+        /*
+           Fail-safe against dummy data in data files.
+           Verify that this rack ID was in the original racks.json file.
            Sometimes status files are contaminated with dummy objects used by bikeshare
            companies for testing purposes
         */
