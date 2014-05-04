@@ -26,23 +26,14 @@ void DataSetLoader::load()
     emit datasetLoaded();
 }
 
-void DataSetLoader::resetVariables()
-{
-    minLatitude = 0;
-    minLongitude = 0;
-
-    maxLatitude = 0;
-    maxLongitude = 0;
-
-    bikeracks.clear();
-}
 /*!
  * \brief DataSetLoader::loadRacks
  * Loads a racks.json file as BikeRack objects.
  */
 void DataSetLoader::loadRacks()
 {
-    resetVariables();
+    /* Clear all existing bikeracks */
+    bikeracks.clear();
 
     QString jsonfile = dataFolder + "racks.json";
     QJsonDocument doc = getJsonContents(jsonfile);
@@ -60,11 +51,17 @@ void DataSetLoader::loadRacks()
 
 }
 
+/*!
+ * \brief DataSetLoader::createBikeRack
+ * Create a BikeRack object
+ * \param rackObj
+ */
 void DataSetLoader::createBikeRack(QJsonObject rackObj)
 {
     qreal latitude = rackObj["latitude"].toDouble();
     qreal longitude = rackObj["longitude"].toDouble();
 
+    /* Set the min-max values to be the values for the first rack that is read. */
     if (bikeracks.keys().size() == 0)
     {
         minLatitude = latitude;
@@ -72,7 +69,6 @@ void DataSetLoader::createBikeRack(QJsonObject rackObj)
         minLongitude = longitude;
         maxLongitude = longitude;
 
-        qDebug() << "start of dataset";
     }
     else
     {
@@ -88,8 +84,6 @@ void DataSetLoader::createBikeRack(QJsonObject rackObj)
         if (maxLongitude <= longitude)
             maxLongitude = longitude;
     }
-
-    //qDebug() << bikeracks.size() << " racks read."<< "min/max: " << minLatitude << "<->" << maxLatitude << " | " << minLongitude << "<->" << maxLongitude;
 
     int capacity = rackObj["capacity"].toInt();
     int rackID = rackObj["id"].toInt();
@@ -119,6 +113,10 @@ QJsonDocument DataSetLoader::getJsonContents(QString jsonfile)
     return loadDoc;
 }
 
+/*!
+ * \brief DataSetLoader::loadDataSet
+ * Builds a list of RackStatus objects from the json files in the dataFolder.
+ */
 void DataSetLoader::loadDataSet()
 {
     /* Add all json files */
@@ -129,8 +127,6 @@ void DataSetLoader::loadDataSet()
 
     QStringList statusFiles = dir.entryList();
     statusFiles.removeAll("racks.json");
-
-    qDebug() << statusFiles.size() << " files to be added.";
 
     int i = 0;
     foreach (QString fileName, statusFiles)

@@ -11,6 +11,7 @@ public:
     explicit RackStatus(qreal epoch, QString city,
                         QHash<int,int> availableBikes, QObject *parent = 0);
 
+
     QHash<int,int> getStatus() { return availableBikes; }
     qreal getTime() { return epoch; }
     QString getCityName() { return city; }

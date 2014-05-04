@@ -43,15 +43,3 @@ void MathUtils::padBorders(qreal percentage, qreal &min, qreal &max)
     max = max + borderY;
     min = min - borderY;
 }
-
-/*!
- * \brief MathUtils::convertPercentageToHue
- * Convert a given percentage to a hue value between 0-120 and round to the nearest int
- * \param percentage
- * \return
- */
-int MathUtils::convertPercentageToHue(int percentage)
-{
-    int hue =  qFloor((100 - percentage) * 120/ 100);  // span hue from 0-120 (red to green)
-    return hue;
-}

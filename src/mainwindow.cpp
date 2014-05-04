@@ -41,13 +41,15 @@
 
 #include "mainwindow.h"
 #include "bikeracksystem.h"
-#include <QPushButton>
 #include <QFileDialog>
-#include <QDebug>
-#include <QLabel>
-#include <QtWidgets>
-#include <QFormLayout>
-
+#include <QAction>
+#include <QToolBar>
+#include <QStyle>
+#include <QMenuBar>
+#include <QMessageBox>
+#include <QTimer>
+#include <QApplication>
+#include <QStatusBar>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -63,11 +65,12 @@ MainWindow::MainWindow(QWidget *parent)
     createBikeRackSystem(width, height);
 
     setMinimumSize(width, height);
-    showMaximized();
+    showFullScreen();
 
     setBackgroundRole(QPalette::Shadow);
 
     connect(this, SIGNAL(statusUpdate(QString)), this, SLOT(setStatus(QString)));
+
 }
 
 /*!
@@ -166,9 +169,15 @@ void MainWindow::createMenu()
  */
 void MainWindow::createStatusBar()
 {
-    //statusBar()->showMessage(tr("Ready"));
+    statusBar()->showMessage(tr("Ready"));
 }
 
+/*!
+ * \brief MainWindow::createBikeRackSystem
+ * Creates a BikeRackSystem object and sets up connections.
+ * \param width
+ * \param height
+ */
 void MainWindow::createBikeRackSystem(int width, int height)
 {
     system = new BikeRackSystem(height, width, this);

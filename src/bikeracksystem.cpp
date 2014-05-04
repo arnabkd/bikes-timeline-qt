@@ -170,7 +170,6 @@ void BikeRackSystem::dataObjectsRead()
 /*!
  * \brief BikeRackSystem::updateDisplay
  * Updates the display to show the current status (as given by the currentStatusIndex variable).
- *
  */
 void BikeRackSystem::updateDisplay()
 {

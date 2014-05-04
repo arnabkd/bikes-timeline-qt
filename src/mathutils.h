@@ -10,8 +10,6 @@ public:
 
     static void padBorders(qreal percentage, qreal &min, qreal &max);
 
-    static int convertPercentageToHue(int percentage);
-
 };
 
 #endif // MATHUTILS_H

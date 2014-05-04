@@ -40,7 +40,6 @@ private:
 
     void loadRacks();
     void loadDataSet();
-    void resetVariables();
 
     void createBikeRack(QJsonObject rackObject);
 
