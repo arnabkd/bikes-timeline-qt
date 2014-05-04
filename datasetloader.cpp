@@ -121,30 +121,31 @@ void DataSetLoader::loadDataSet()
     int i = 0;
     foreach (QString fileName, statusFiles)
     {
-       i++;
-       if (i%1000 == 0)
-           emit loadingStatus("Loading file " + QString::number(i) + " of "
-                          + QString::number(statusFiles.size()));
+        i++;
+        emit loadingStatus("Loading file " + QString::number(i) + " of "
+                           + QString::number(statusFiles.size()));
 
-       QJsonDocument doc = getJsonContents(dataFolder + "/" +fileName);
-       QJsonObject obj = doc.object();
+        QJsonDocument doc = getJsonContents(dataFolder + "/" +fileName);
+        QJsonObject obj = doc.object();
 
-       qreal epoch = obj["time"].toDouble();
-       QString city = obj["city"].toString();
+        qreal epoch = obj["time"].toDouble();
+        QString city = obj["city"].toString();
 
-       QJsonArray stations = obj["stations"].toArray();
-       QHash<int,int> availableBikes;
+        QJsonArray stations = obj["stations"].toArray();
+        QHash<int,int> availableBikes;
 
-       foreach (QJsonValue station, stations)
-       {
-           QJsonObject rackStatus = station.toObject();
-           int id = rackStatus["id"].toInt();
-           int bikes = rackStatus["bikes"].toInt();
-           availableBikes[id] = bikes;
-       }
+        foreach (QJsonValue station, stations)
+        {
+            QJsonObject rackStatus = station.toObject();
+            int id = rackStatus["id"].toInt();
+            int bikes = rackStatus["bikes"].toInt();
+            availableBikes[id] = bikes;
+        }
 
-       RackStatus * rackstatus = new RackStatus(epoch, city, availableBikes);
-       timeline.append(rackstatus);
+
+
+        RackStatus * rackstatus = new RackStatus(epoch, city, availableBikes);
+        timeline.append(rackstatus);
     }
 
 

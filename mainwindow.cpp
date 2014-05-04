@@ -53,7 +53,7 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 {
     setWindowTitle("Bike share visualization");
-    qreal width = 1024;
+    qreal width = 800;
     qreal height = 600;
 
     createActions();
@@ -70,6 +70,17 @@ MainWindow::MainWindow(QWidget *parent)
     connect(this, SIGNAL(statusUpdate(QString)), this, SLOT(setStatus(QString)));
 }
 
+/*!
+ * \brief MainWindow::createActions
+ * Creates the actions:
+ * - browseAction
+ * - nextAction
+ * - previousAction
+ * - playPauseAction
+ * - stopAction
+ *
+ * All except browseAction are disabled at start.
+ */
 void MainWindow::createActions()
 {
     browseAction = new QAction(tr("Set data folder"), this);
@@ -99,9 +110,16 @@ void MainWindow::createActions()
     stopAction->setStatusTip(tr("Stop the animation"));
     connect(stopAction, SIGNAL(triggered()), this, SLOT(stop()));
 
+    aboutAction = new QAction(tr("About Qt"), this);
+    connect(aboutAction, SIGNAL(triggered()), this, SLOT(aboutQt()));
+
     setControlsEnabled(false);
 }
 
+/*!
+ * \brief MainWindow::createToolBar
+ * Creates toolbar and adds all actions.
+ */
 void MainWindow::createToolBar()
 {
     toolBar = addToolBar(tr("Toolbar"));
@@ -126,19 +144,29 @@ void MainWindow::createToolBar()
                         (QStyle::SP_MediaSeekForward));
 }
 
+/*!
+ * \brief MainWindow::createMenu
+ * Creates a menu and adds the actions to it.
+ */
 void MainWindow::createMenu()
 {
-    menu = menuBar()->addMenu(tr("App menu"));
-    menu->addAction(browseAction);
-    menu->addAction(nextAction);
-    menu->addAction(previousAction);
-    menu->addAction(playPauseAction);
-    menu->addAction(stopAction);
+    fileMenu = menuBar()->addMenu(tr("File"));
+    fileMenu->addAction(browseAction);
+    fileMenu->addAction(nextAction);
+    fileMenu->addAction(previousAction);
+    fileMenu->addAction(playPauseAction);
+    fileMenu->addAction(stopAction);
+
+    helpMenu = menuBar()->addMenu(tr("Help"));
+    helpMenu->addAction(aboutAction);
 }
 
+/*!
+ * \brief MainWindow::createStatusBar
+ */
 void MainWindow::createStatusBar()
 {
-    statusBar()->showMessage(tr("Ready"));
+    //statusBar()->showMessage(tr("Ready"));
 }
 
 void MainWindow::createBikeRackSystem(int width, int height)
@@ -159,6 +187,11 @@ void MainWindow::createBikeRackSystem(int width, int height)
     setCentralWidget(system);
 }
 
+/*!
+ * \brief MainWindow::setControlsEnabled
+ * Enables or disables controls.
+ * \param enable
+ */
 void MainWindow::setControlsEnabled(bool enable)
 {
     nextAction->setEnabled(enable);
@@ -167,27 +200,38 @@ void MainWindow::setControlsEnabled(bool enable)
     stopAction->setEnabled(enable);
 }
 
+/*!
+ * \brief MainWindow::dataSetLoaded
+ * Enables the controls after the dataset has been loaded.
+ */
 void MainWindow::dataSetLoaded()
 {
     setControlsEnabled(true);
 }
 
 
+/*!
+ * \brief MainWindow::browse
+ *  The browse action calls this slot. Prompts the user to choose a dataset folder containing a racks.json file
+ */
 void MainWindow::browse()
 {
-    QString dir = QFileDialog::getExistingDirectory(this, tr("Open Directory"),
+    QString dir = QFileDialog::getExistingDirectory(this, tr("Open Directory containing a racks.json file"),
                                                     QDir::homePath(),
                                                     QFileDialog::ShowDirsOnly
                                                     | QFileDialog::DontResolveSymlinks);
 
-    if (system != NULL)
+    if (system == NULL)
     {
-        if (!system->setDataFolder(dir + "/"))
-        {
-            emit statusUpdate("Something went wrong. Check that you opened the correct directory");
-            return;
-        }
+        return;
     }
+
+    if (!system->setDataFolder(dir + "/"))
+    {
+        QMessageBox::warning(this,"Error", "Could not find a racks.json file in that folder. Check that you opened the correct directory");
+        return;
+    }
+
 
     stop();
     system->loadDataSet();
@@ -195,13 +239,21 @@ void MainWindow::browse()
 
 }
 
+/*!
+ * \brief MainWindow::setStatus
+ *  Sets the text for statusbar.
+ * \param message
+ */
 void MainWindow::setStatus(QString message)
 {
     statusBar()->showMessage(message);
 }
 
 
-
+/*!
+ * \brief MainWindow::playPause
+ *  Play/pause slot. Plays/pauses the animation.
+ */
 void MainWindow::playPause()
 {
     if (timer)
@@ -222,6 +274,10 @@ void MainWindow::playPause()
                              (QStyle::SP_MediaPause));
 }
 
+/*!
+ * \brief MainWindow::stop
+ * Stops the animation.
+ */
 void MainWindow::stop()
 {
     if (!timer)
@@ -240,13 +296,28 @@ void MainWindow::stop()
 
 }
 
+/*!
+ * \brief MainWindow::aboutQt
+ * Calls QApplication::aboutQt()
+ */
+void MainWindow::aboutQt()
+{
+    QApplication::aboutQt();
+}
 
-
+/*!
+ * \brief MainWindow::next
+ * Emits a nextStatus() signal (intended for the BikeRackSystem object)
+ */
 void MainWindow::next()
 {
     emit nextStatus();
 }
 
+/*!
+ * \brief MainWindow::previous
+ * Emits a previousStatus() signal (intended for the BikeRackSystem object)
+ */
 void MainWindow::previous()
 {
     emit previousStatus();

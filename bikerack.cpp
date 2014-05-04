@@ -51,8 +51,8 @@ void BikeRack::updateNumBikes(int bikes)
 
     /* Calculate the hue that should be shown for this amount of bikes */
     qreal percentage = (qreal(bikes) / qreal(capacity))*100;
-    int hue = MathUtils::convertPercentageToHue(percentage);
-
+    //int hue = MathUtils::convertPercentageToHue(percentage);
+    int hue = (int) MathUtils::getRescaledValue(percentage,0,100,120);
     changeLum(hue,255,255);
 
 }
@@ -66,7 +66,6 @@ void BikeRack::updateNumBikes(int bikes)
 
 void BikeRack::changeLum(int H, int S, int V)
 {
-    QBrush * brush = new QBrush(QColor::fromHsv(H,S,V));
-    setBrush(* brush);
+    setBrush(QBrush(QColor::fromHsv(H,S,V)));
 
 }

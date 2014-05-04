@@ -23,9 +23,11 @@ private:
     QAction * previousAction;
     QAction * playPauseAction;
     QAction * stopAction;
+    QAction * aboutAction;
 
     /* Menu */
-    QMenu * menu;
+    QMenu * fileMenu;
+    QMenu * helpMenu;
 
     /* Toolbar */
     QToolBar * toolBar;
@@ -55,6 +57,7 @@ private slots:
     void previous();
     void playPause();
     void stop();
+    void aboutQt();
 
     void setStatus(QString message);
 

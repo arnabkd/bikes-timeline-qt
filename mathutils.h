@@ -6,8 +6,7 @@
 class MathUtils
 {
 public:
-    static qreal convertLatitudeToY(qreal latitude, qreal minLatitude, qreal maxLatitude, qreal height);
-    static qreal convertLongitudeToX(qreal longitude, qreal minLongitude, qreal maxLongitude, qreal width);
+    static qreal getRescaledValue(qreal value, qreal minValue, qreal maxValue, qreal newRange, bool flip= false);
 
     static void padBorders(qreal percentage, qreal &min, qreal &max);
 
