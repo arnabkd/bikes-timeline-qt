@@ -3,7 +3,7 @@
 #include <QTextCodec>
 #include <QDebug>
 #include <QGraphicsBlurEffect>
-#include <mathutils.h>
+#include "mathutils.h"
 
 
 BikeRack::BikeRack(qreal longitude, qreal latitude, int capacity, QString desc) :

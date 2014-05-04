@@ -12,19 +12,18 @@ TARGET = Bikeracks
 TEMPLATE = app
 
 
-SOURCES += main.cpp\
-        mainwindow.cpp \
-    bikerack.cpp \
-    bikeracksystem.cpp \
-    rackstatus.cpp \
-    mathutils.cpp \
-    datasetloader.cpp
+SOURCES += src/main.cpp\
+        src/mainwindow.cpp \
+    src/bikerack.cpp \
+    src/bikeracksystem.cpp \
+    src/rackstatus.cpp \
+    src/mathutils.cpp \
+    src/datasetloader.cpp
 
-HEADERS  += mainwindow.h \
-    bikerack.h \
-    bikeracksystem.h \
-    rackstatus.h \
-    mathutils.h \
-    datasetloader.h
+HEADERS  += src/mainwindow.h \
+    src/bikerack.h \
+    src/bikeracksystem.h \
+    src/rackstatus.h \
+    src/mathutils.h \
+    src/datasetloader.h
 
-FORMS    +=
