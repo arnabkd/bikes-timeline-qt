@@ -32,3 +32,4 @@ Figure: Post morning rush visualization of London bike racks
 * Data collection for Oslo done by Martin Stensgård @mastensg
 * Thanks to the [PyBikes project](https://github.com/eskerda/PyBikes), which helped me gather data for a number of bikeshare systems around the world.
 * Developed by @arnabkd
+* The project homepage can be found [here!] (http://arnabkd.github.io/bikes-timeline-qt)
