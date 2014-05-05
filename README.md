@@ -5,9 +5,10 @@ The project homepage can be found [here!] (http://arnabkd.github.io/bikes-timeli
 
 ## Usage
 1. Compile the application and launch it.
-2. In the app, browse to one of the sub-folders under the `example-data` folder.
-3. Click "Ok" and wait for the dataset to be loaded.
-4. Click play (or press the spacebar) and enjoy the animation!
+2. Unzip the (desired) datasets in the `example-data`
+3. In the app, browse to one of the sub-folders under the `example-data` folder.
+4. Click "Ok" and wait for the dataset to be loaded.
+5. Click play (or press the spacebar) and enjoy the animation!
 
 ## Screenshots
 
