@@ -170,7 +170,7 @@ void MainWindow::createMenu()
  */
 void MainWindow::createStatusBar()
 {
-    statusBar()->showMessage(tr("Ready"));
+
 }
 
 /*!
